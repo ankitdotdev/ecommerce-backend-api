@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import authServices from "./auth.services";
-import { resetTokenCookieOptions } from "../../config/cookies";
+import {
+  accessTokenCookieOptions,
+  resetTokenCookieOptions,
+} from "../../config/cookies";
 
 class AuthController {
   registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -51,6 +54,7 @@ class AuthController {
   });
 
   // LOGIN __________________________________
+
   loginUser = catchAsync(async (req: Request, res: Response) => {
     console.log("CONTROLLER: Login request received");
 
@@ -60,12 +64,20 @@ class AuthController {
 
     console.log("CONTROLLER: Login completed");
 
+    res.cookie(
+      "accessToken",
+
+      result.accessToken,
+
+      accessTokenCookieOptions,
+    );
+
+    console.log("CONTROLLER: Access token cookie set");
+
     res.status(200).json({
       success: true,
 
       message: "Login successful",
-
-      data: result,
     });
   });
 

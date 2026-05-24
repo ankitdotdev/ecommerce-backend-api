@@ -3,6 +3,7 @@ import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
 import { v4 as uuidv4 } from "uuid";
+import { generateToken } from "../../utils/jwt";
 
 class AuthService {
   async registerUser(payload: Partial<IUser>) {
@@ -210,6 +211,7 @@ class AuthService {
   }
 
   // LOGIN  ____________________________________________________
+
   async loginUser(payload: { email: string; password: string }) {
     console.log("STEP 1: Login started");
 
@@ -234,16 +236,16 @@ class AuthService {
       throw new Error("Email not verified");
     }
 
-    // blocked/inactive check
+    // blocked/inactive
     if (user.status === "blocked" || user.status === "inactive") {
-      console.log("STEP 5: User account restricted");
+      console.log("STEP 5: Account restricted");
 
       throw new Error("Account access denied");
     }
 
     console.log("STEP 6: Verifying password");
 
-    // compare password
+    // verify password
     const isPasswordMatched = await argon2.verify(
       user.password,
       payload.password,
@@ -258,6 +260,17 @@ class AuthService {
 
     console.log("STEP 8: Password verified");
 
+    // generate access token
+    const accessToken = generateToken({
+      userId: user._id.toString(),
+
+      email: user.email,
+
+      role: user.role,
+    });
+
+    console.log("STEP 9: Access token generated");
+
     // update last login
     user.set({
       lastLoginAt: new Date(),
@@ -265,9 +278,11 @@ class AuthService {
 
     await user.save();
 
-    console.log("STEP 9: Last login updated");
+    console.log("STEP 10: Last login updated");
 
-    return user;
+    return {
+      accessToken,
+    };
   }
 
   // FORGOT_PASSWORD ______________________________________

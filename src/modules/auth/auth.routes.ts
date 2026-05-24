@@ -8,6 +8,8 @@
 // POST	/api/v1/auth/verify-reset-otp	Verify Reset OTP password
 // POST	/api/auth/reset-password	Reset password
 // PUT	/api/auth/change-password	Change password while logged in
+// POST	/api/v1/auth/refresh-token	 Refresh access token
+// POST	/api/v1/auth/logout	Logout authenticated user
 
 import { Router } from "express";
 import authController from "./auth.controller";
@@ -341,3 +343,25 @@ authRouter.put(
 
 authRouter.post("/refresh-token", authController.refreshToken);
 export default authRouter;
+
+// LOGOUT ___________________________________________________________
+
+/**
+ * @swagger
+ * /api/v1/auth/logout:
+ *   post:
+ *     summary: Logout authenticated user
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ */
+
+authRouter.post(
+  "/logout",
+
+  authMiddleware,
+
+  authController.logoutUser,
+);

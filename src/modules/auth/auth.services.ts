@@ -512,11 +512,8 @@ class AuthService {
     return;
   }
 
-
-
-
   // REFRESH_TOKEN ________________________________________________
-  
+
   async refreshToken(refreshToken: string) {
     console.log("STEP 1: Refresh token flow started");
 
@@ -583,6 +580,40 @@ class AuthService {
     return {
       accessToken: newAccessToken,
     };
+  }
+
+  // LOGOUT ___________________________________________________________
+
+  async logoutUser(userData: any) {
+    console.log("STEP 1: Logout started");
+
+    // find user
+    const user = await User.findById(userData.userId);
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 3: User not found");
+
+      throw new Error("User not found");
+    }
+
+    // remove refresh token
+    user.set({
+      refreshToken: null,
+
+      refreshTokenExpiresAt: null,
+    });
+
+    console.log("STEP 4: Refresh token removed");
+
+    // save user
+    await user.save();
+
+    console.log("STEP 5: Logout saved");
+
+    return null;
   }
 }
 

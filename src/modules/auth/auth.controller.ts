@@ -17,12 +17,16 @@ class AuthController {
 
   // VERIFY OTP CONTROLLER
   verifyOtp = catchAsync(async (req: Request, res: Response) => {
-    const payload = req.body;
+    const { email, otp } = req.body;
+
+    const result = await authServices.verifyOtp(email, otp);
 
     res.status(200).json({
       success: true,
+
       message: "OTP verified successfully",
-      data: payload,
+
+      data: result,
     });
   });
 }

@@ -88,39 +88,66 @@ class AuthService {
 
   // VERIFY OTP SERVICE LOGIN
   async verifyOtp(email: string, otp: string) {
-    // check user exists
-    const user = await User.findOne({ email });
+    console.log("STEP 1: OTP verification started");
 
+    // find user
+    const user = await User.findOne({
+      email,
+    });
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
     if (!user) {
+      console.log("STEP 3: User not found");
+
       throw new Error("User not found");
     }
 
-    // check already verified
+    // already verified
     if (user.isEmailVerified) {
+      console.log("STEP 4: Email already verified");
+
       throw new Error("Email already verified");
     }
 
-    // compare otp
+    console.log("STEP 5: Checking OTP");
+
+    // invalid otp
     if (user.otp !== otp) {
+      console.log("STEP 6: Invalid OTP");
+
       throw new Error("Invalid OTP");
     }
 
-    // check otp expiry
+    console.log("STEP 7: OTP matched");
+
+    // expired otp
     if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      console.log("STEP 8: OTP expired");
+
       throw new Error("OTP expired");
     }
 
-    // update verification
-    user.isEmailVerified = true;
+    console.log("STEP 9: OTP expiry validated");
 
-    user.emailVerifiedAt = new Date();
+    // update verification status
+    user.set({
+      isEmailVerified: true,
 
-    // remove otp after verification
-    user.otp = undefined;
+      emailVerifiedAt: new Date(),
 
-    user.otpExpiresAt = undefined;
+      otp: null,
 
+      otpExpiresAt: null,
+    });
+
+    console.log("STEP 10: Verification fields updated");
+
+    // save updated user
     await user.save();
+
+    console.log("STEP 11: User verification saved");
 
     return user;
   }

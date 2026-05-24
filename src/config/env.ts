@@ -3,13 +3,13 @@ import { z } from "zod";
 const envSchema = z.object({
   PORT: z.string(),
 
-  NODE_ENV: z.enum([
-    "development",
-    "production",
-    "test",
-  ]),
+  NODE_ENV: z.enum(["development", "production", "test"]),
 
   API_PREFIX: z.string(),
+
+  // EMAIL CONFIG
+  RESEND_API_KEY: z.string(),
+  EMAIL_FROM: z.string(),
 
   MONGO_URI: z.string(),
 

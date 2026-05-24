@@ -16,4 +16,9 @@ export const config = {
   jwtExpiresIn: envConfig.JWT_EXPIRES_IN,
 
   apiPrefix: envConfig.API_PREFIX,
+
+
+  // EMAIL SERVICE CONFIG
+  resendApiKey: envConfig.RESEND_API_KEY,
+  emailFrom: envConfig.EMAIL_FROM,
 };

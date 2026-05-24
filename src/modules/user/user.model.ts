@@ -82,6 +82,14 @@ const userSchema = new Schema<IUser, UserModel>(
       type: Date,
     },
 
+    resetToken: {
+      type: String,
+    },
+
+    resetTokenExpiresAt: {
+      type: Date,
+    },
+    
     passwordChangedAt: {
       type: Date,
     },

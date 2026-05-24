@@ -33,6 +33,10 @@ export interface IUser {
   // Security
   lastLoginAt?: Date;
 
+  resetToken?: string;
+
+  resetTokenExpiresAt?: Date;
+
   passwordChangedAt?: Date;
 
   blockedAt?: Date;

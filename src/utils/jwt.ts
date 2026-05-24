@@ -1,10 +1,10 @@
 // jwt.ts
 
-import jwt, { Secret, SignOptions } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret, SignOptions } from "jsonwebtoken";
 
 import { config } from "../config";
 
-export const generateToken = (payload: {
+export const generateAccessToken = (payload: {
   userId: string;
   email: string;
   role: string;
@@ -16,4 +16,17 @@ export const generateToken = (payload: {
   };
 
   return jwt.sign(payload, secret, options);
+};
+
+// REFRESH TOKEN
+export const generateRefreshToken = (payload: JwtPayload) => {
+  return jwt.sign(
+    payload,
+
+    config.jwtRefreshSecret as Secret,
+
+    {
+      expiresIn: config.jwtRefreshExpiresIn as SignOptions["expiresIn"],
+    },
+  );
 };

@@ -20,13 +20,17 @@ import { config } from "./config";
 
 const app: Application = express();
 
-
 // parsers
 app.use(express.json());
 
-
 // third-party middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace this with your frontend url
+
+    credentials: true, // Required configuration to use cookies
+  }),
+);
 
 app.use(helmet());
 
@@ -34,14 +38,8 @@ app.use(morgan("dev"));
 
 app.use(cookieParser());
 
-
 // swagger docs
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-);
-
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // test route
 app.get("/", (req, res) => {
@@ -51,13 +49,8 @@ app.get("/", (req, res) => {
   });
 });
 
-
 // auth routes
-app.use(
-  `${config.apiPrefix}/auth`,
-  authRouter
-);
-
+app.use(`${config.apiPrefix}/auth`, authRouter);
 
 // not found handler
 app.use((req, res) => {
@@ -66,7 +59,6 @@ app.use((req, res) => {
     message: "Route not found",
   });
 });
-
 
 // global error handler
 app.use(globalErrorHandler);

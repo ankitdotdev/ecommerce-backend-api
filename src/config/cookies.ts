@@ -10,6 +10,16 @@ export const accessTokenCookieOptions: CookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000,
 };
 
+export const refreshTokenCookieOptions: CookieOptions = {
+  httpOnly: true,
+
+  secure: false,
+
+  sameSite: "strict",
+
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 export const resetTokenCookieOptions: CookieOptions = {
   httpOnly: true,
 

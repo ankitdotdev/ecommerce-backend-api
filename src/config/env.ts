@@ -13,9 +13,13 @@ const envSchema = z.object({
 
   MONGO_URI: z.string(),
 
-  JWT_SECRET: z.string().min(10),
+  JWT_ACCESS_SECRET: z.string().min(10),
 
-  JWT_EXPIRES_IN: z.string(),
+  JWT_ACCESS_EXPIRES_IN: z.string(),
+
+  JWT_REFRESH_SECRET: z.string().min(10),
+
+  JWT_REFRESH_EXPIRES_IN: z.string(),
 });
 
 export const envConfig = envSchema.parse(process.env);

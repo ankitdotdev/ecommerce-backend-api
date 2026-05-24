@@ -31,8 +31,6 @@ class AuthController {
   });
 
   // RESEND OTP
-  // auth.controller.ts
-
   resendOtp = catchAsync(async (req: Request, res: Response) => {
     console.log("CONTROLLER: Resend OTP request received");
 

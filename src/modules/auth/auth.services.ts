@@ -153,8 +153,6 @@ class AuthService {
   }
 
   // RESEND OTP___________________________________________
-  // auth.services.ts
-
   async resendOtp(email: string) {
     console.log("STEP 1: Resend OTP started");
 

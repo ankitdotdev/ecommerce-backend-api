@@ -4,7 +4,8 @@ import { User } from "../user/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
 import { v4 as uuidv4 } from "uuid";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
-
+import jwt from "jsonwebtoken";
+import { config } from "../../config";
 class AuthService {
   async registerUser(payload: Partial<IUser>) {
     console.log("STEP 1: Register started");
@@ -509,6 +510,79 @@ class AuthService {
     console.log("STEP 9: Password updated successfully");
 
     return;
+  }
+
+
+
+
+  // REFRESH_TOKEN ________________________________________________
+  
+  async refreshToken(refreshToken: string) {
+    console.log("STEP 1: Refresh token flow started");
+
+    // missing token
+    if (!refreshToken) {
+      console.log("STEP 2: Refresh token missing");
+
+      throw new Error("Unauthorized access");
+    }
+
+    console.log("STEP 3: Verifying refresh token");
+
+    // verify token
+    const decoded = jwt.verify(
+      refreshToken,
+
+      config.jwtRefreshSecret,
+    ) as jwt.JwtPayload;
+
+    console.log("STEP 4: Refresh token verified");
+
+    // find user
+    const user = await User.findById(decoded.userId);
+
+    console.log("STEP 5: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 6: User not found");
+
+      throw new Error("User not found");
+    }
+
+    // validate stored refresh token
+    if (user.refreshToken !== refreshToken) {
+      console.log("STEP 7: Invalid refresh token");
+
+      throw new Error("Invalid refresh token");
+    }
+
+    // refresh token expired
+    if (
+      !user.refreshTokenExpiresAt ||
+      user.refreshTokenExpiresAt < new Date()
+    ) {
+      console.log("STEP 8: Refresh token expired");
+
+      throw new Error("Refresh token expired");
+    }
+
+    console.log("STEP 9: Stored refresh token validated");
+
+    // generate new access token
+    const newAccessToken = generateAccessToken({
+      userId: user._id.toString(),
+
+      email: user.email,
+
+      role: user.role,
+    });
+
+    console.log("STEP 10: New access token generated");
+
+    return {
+      accessToken: newAccessToken,
+    };
   }
 }
 

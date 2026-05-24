@@ -180,6 +180,38 @@ class AuthController {
       message: "Password changed successfully",
     });
   });
+
+
+
+  // REFRESH_TOKEN ________________________________________________
+
+  refreshToken = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Refresh token request received");
+
+    // get refresh token from cookie
+    const refreshToken = req.cookies.refreshToken;
+
+    const result = await authServices.refreshToken(refreshToken);
+
+    console.log("CONTROLLER: New access token generated");
+
+    // set new access token cookie
+    res.cookie(
+      "accessToken",
+
+      result.accessToken,
+
+      accessTokenCookieOptions,
+    );
+
+    console.log("CONTROLLER: Access token cookie updated");
+
+    res.status(200).json({
+      success: true,
+
+      message: "Access token refreshed successfully",
+    });
+  });
 }
 
 export default new AuthController();

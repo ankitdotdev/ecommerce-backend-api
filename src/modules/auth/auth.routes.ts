@@ -324,4 +324,20 @@ authRouter.put(
 
   authController.changePassword,
 );
+
+// REFRESH_TOKEN ________________________________________________
+
+/**
+ * @swagger
+ * /api/v1/auth/refresh-token:
+ *   post:
+ *     summary: Refresh access token
+ *     tags:
+ *       - Auth
+ *     responses:
+ *       200:
+ *         description: Access token refreshed successfully
+ */
+
+authRouter.post("/refresh-token", authController.refreshToken);
 export default authRouter;

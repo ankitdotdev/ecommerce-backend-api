@@ -6,6 +6,7 @@
 // POST	/api/auth/login	Login verified user
 // POST	/api/auth/forgot-password	Send password reset OTP
 // POST	/api/auth/reset-password	Reset password using OTP
+
 // PUT	/api/auth/change-password	Change password while logged in
 
 import { Router } from "express";
@@ -16,7 +17,9 @@ import {
   loginValidationSchema,
   registerValidationSchema,
   resendOtpValidationSchema,
+  resetPasswordValidationSchema,
   verifyOtpValidationSchema,
+  verifyResetOtpValidationSchema,
 } from "./auth.schema";
 
 const authRouter = Router();
@@ -206,5 +209,75 @@ authRouter.post(
   validateRequest(forgotPasswordValidationSchema),
 
   authController.forgotPassword,
+);
+
+// VERIFY_RESET_PASSWORD_OTP _________________________________________
+/**
+ * @swagger
+ * /api/v1/auth/verify-reset-otp:
+ *   post:
+ *     summary: Verify reset password OTP
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: ankitmishra.dev11@gmail.com
+ *               otp:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: Reset OTP verified successfully
+ */
+
+authRouter.post(
+  "/verify-reset-otp",
+
+  validateRequest(verifyResetOtpValidationSchema),
+
+  authController.verifyResetOtp,
+);
+// RESET_PASSWORD _______________________________________
+
+/**
+ * @swagger
+ * /api/v1/auth/reset-password:
+ *   post:
+ *     summary: Reset password
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newPassword
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 example: NewPassword@123
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ */
+
+authRouter.post(
+  "/reset-password",
+
+  validateRequest(resetPasswordValidationSchema),
+
+  authController.resetPassword,
 );
 export default authRouter;

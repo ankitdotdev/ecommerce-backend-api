@@ -2,6 +2,7 @@ import argon2 from "argon2";
 import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
+import { v4 as uuidv4 } from "uuid";
 
 class AuthService {
   async registerUser(payload: Partial<IUser>) {
@@ -319,6 +320,121 @@ class AuthService {
     await authEmailServices.sendForgotPasswordOtp(user.email, otp);
 
     console.log("STEP 8: Password reset email sent");
+
+    return null;
+  }
+
+  // VERIFY_RESET_PASSWORD_OTP _________________________________________
+
+  async verifyResetOtp(payload: { email: string; otp: string }) {
+    console.log("STEP 1: Reset OTP verification started");
+
+    // find user
+    const user = await User.findOne({
+      email: payload.email,
+    });
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // invalid otp
+    if (user.otp !== payload.otp) {
+      throw new Error("Invalid OTP");
+    }
+
+    // expired otp
+    if (!user.otpExpiresAt || user.otpExpiresAt < new Date()) {
+      throw new Error("OTP expired");
+    }
+
+    console.log("STEP 3: OTP validated");
+
+    // generate secure reset token
+    const resetToken = uuidv4();
+
+    // save reset token
+    user.set({
+      resetToken,
+
+      resetTokenExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
+
+      otp: null,
+
+      otpExpiresAt: null,
+    });
+
+    console.log("STEP 4: Reset token generated");
+
+    await user.save();
+
+    console.log("STEP 5: Reset token saved");
+
+    return {
+      resetToken,
+    };
+  }
+
+  // RESET_PASSWORD _______________________________________
+
+  async resetPassword(payload: { resetToken: string; newPassword: string }) {
+    console.log("STEP 1: Reset password started");
+
+    // missing token
+    if (!payload.resetToken) {
+      console.log("STEP 2: Reset token missing");
+
+      throw new Error("Unauthorized access");
+    }
+
+    // find user
+    const user = await User.findOne({
+      resetToken: payload.resetToken,
+    }).select("+password");
+
+    console.log("STEP 3: User lookup completed");
+
+    // invalid token
+    if (!user) {
+      console.log("STEP 4: Invalid reset token");
+
+      throw new Error("Invalid reset token");
+    }
+
+    // token expired
+    if (!user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
+      console.log("STEP 5: Reset token expired");
+
+      throw new Error("Reset token expired");
+    }
+
+    console.log("STEP 6: Reset token validated");
+
+    // hash new password
+    const hashedPassword = await argon2.hash(payload.newPassword);
+
+    console.log("STEP 7: Password hashed");
+
+    // update user
+    user.set({
+      password: hashedPassword,
+
+      passwordChangedAt: new Date(),
+
+      resetToken: null,
+
+      resetTokenExpiresAt: null,
+    });
+
+    console.log("STEP 8: Password fields updated");
+
+    // save user
+    await user.save();
+
+    console.log("STEP 9: Password reset saved");
 
     return null;
   }

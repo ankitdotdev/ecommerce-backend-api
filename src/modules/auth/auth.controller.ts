@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import catchAsync from "../../utils/catchAsync";
 import authServices from "./auth.services";
+import { resetTokenCookieOptions } from "../../config/cookies";
 
 class AuthController {
   registerUser = catchAsync(async (req: Request, res: Response) => {
@@ -68,35 +69,76 @@ class AuthController {
     });
   });
 
-// FORGOT_PASSWORD ______________________________________
-forgotPassword = catchAsync(
-  async (req: Request, res: Response) => {
-
-    console.log(
-      "CONTROLLER: Forgot password request received"
-    );
+  // FORGOT_PASSWORD ______________________________________
+  forgotPassword = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Forgot password request received");
 
     const { email } = req.body;
 
-    const result =
-      await authServices.forgotPassword(
-        email
-      );
+    const result = await authServices.forgotPassword(email);
 
-    console.log(
-      "CONTROLLER: Forgot password completed"
-    );
+    console.log("CONTROLLER: Forgot password completed");
 
     res.status(200).json({
       success: true,
 
-      message:
-        "Password reset OTP sent successfully",
+      message: "Password reset OTP sent successfully",
 
       data: result,
     });
-  }
-);
+  });
+
+  // VERIFY_RESET_PASSWORD_OTP _________________________________________
+  verifyResetOtp = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Verify reset OTP request received");
+
+    const payload = req.body;
+
+    const result = await authServices.verifyResetOtp(payload);
+
+    console.log("CONTROLLER: Reset OTP verified");
+
+    // set secure reset token cookie
+    res.cookie("resetToken", result.resetToken, resetTokenCookieOptions);
+
+    res.status(200).json({
+      success: true,
+
+      message: "Reset OTP verified successfully",
+    });
+  });
+
+  // RESET_PASSWORD _______________________________________
+
+  resetPassword = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Reset password request received");
+
+    const { newPassword } = req.body;
+
+    // read reset token from cookie
+    const resetToken = req.cookies.resetToken;
+
+    const result = await authServices.resetPassword({
+      resetToken,
+
+      newPassword,
+    });
+
+    console.log("CONTROLLER: Password reset completed");
+
+    // clear reset token cookie
+    res.clearCookie("resetToken");
+
+    console.log("CONTROLLER: Reset token cookie cleared");
+
+    res.status(200).json({
+      success: true,
+
+      message: "Password reset successful",
+
+      data: result,
+    });
+  });
 }
 
 export default new AuthController();

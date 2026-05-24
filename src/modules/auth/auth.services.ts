@@ -268,6 +268,60 @@ class AuthService {
 
     return user;
   }
+
+  // FORGOT_PASSWORD ______________________________________
+  async forgotPassword(email: string) {
+    console.log("STEP 1: Forgot password started");
+
+    // find user
+    const user = await User.findOne({
+      email,
+    });
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 3: User not found");
+
+      throw new Error("User not found");
+    }
+
+    // email not verified
+    if (!user.isEmailVerified) {
+      console.log("STEP 4: Email not verified");
+
+      throw new Error("Email not verified");
+    }
+
+    console.log("STEP 5: Generating reset OTP");
+
+    // generate otp
+    const otp = authEmailServices.generateOtp();
+
+    // generate expiry
+    const otpExpiresAt = authEmailServices.generateOtpExpiry();
+
+    // update user
+    user.set({
+      otp,
+      otpExpiresAt,
+    });
+
+    console.log("STEP 6: Reset OTP updated");
+
+    // save user
+    await user.save();
+
+    console.log("STEP 7: Reset OTP saved");
+
+    // send email
+    await authEmailServices.sendForgotPasswordOtp(user.email, otp);
+
+    console.log("STEP 8: Password reset email sent");
+
+    return null;
+  }
 }
 
 export default new AuthService();

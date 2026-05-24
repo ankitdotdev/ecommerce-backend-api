@@ -12,6 +12,7 @@ import { Router } from "express";
 import authController from "./auth.controller";
 import validateRequest from "../../middleware/schemal.validator";
 import {
+  forgotPasswordValidationSchema,
   loginValidationSchema,
   registerValidationSchema,
   resendOtpValidationSchema,
@@ -66,7 +67,6 @@ authRouter.post(
 );
 
 // VERIFY OTP ____________________________________________________
-// auth.routes.ts
 
 /**
  * @swagger
@@ -103,7 +103,6 @@ authRouter.post(
 );
 
 // RESEND OTP _______________________________________________________________
-// auth.routes.ts
 
 /**
  * @swagger
@@ -138,7 +137,6 @@ authRouter.post(
 );
 
 // LOGIN_________________________________________________________
-// auth.routes.ts
 
 /**
  * @swagger
@@ -174,5 +172,39 @@ authRouter.post(
   validateRequest(loginValidationSchema),
 
   authController.loginUser,
+);
+
+// FORGOT_PASSWORD ______________________________________
+
+/**
+ * @swagger
+ * /api/v1/auth/forgot-password:
+ *   post:
+ *     summary: Send password reset OTP
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: ankitmishra.dev11@gmail.com
+ *     responses:
+ *       200:
+ *         description: Password reset OTP sent successfully
+ */
+
+authRouter.post(
+  "/forgot-password",
+
+  validateRequest(forgotPasswordValidationSchema),
+
+  authController.forgotPassword,
 );
 export default authRouter;

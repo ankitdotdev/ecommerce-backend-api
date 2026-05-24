@@ -1,8 +1,11 @@
 import emailService from "../../email.service";
 
-import { verifyOtpTemplate } from "./auth-email.template";
+import { forgotPasswordTemplate, verifyOtpTemplate } from "./auth-email.template";
 
 class AuthEmailService {
+
+
+// GENERATE OTP LOGIC ___________________________________________
 
   generateOtp() {
 
@@ -18,6 +21,9 @@ class AuthEmailService {
     );
   }
 
+
+// VERIFY OTP EMAIL ___________________________________________
+
   async sendVerificationOtp(
     email: string,
     otp: string
@@ -31,6 +37,24 @@ class AuthEmailService {
       html: verifyOtpTemplate(otp),
     });
   }
+
+// FORGET PASSWORD EMAIL  ____________________________________
+
+  async sendForgotPasswordOtp(
+  email: string,
+  otp: string
+) {
+
+  await emailService.sendEmail({
+    to: email,
+
+    subject: "Reset Your Password",
+
+    html: forgotPasswordTemplate(
+      otp
+    ),
+  });
+}
 }
 
 export default new AuthEmailService();

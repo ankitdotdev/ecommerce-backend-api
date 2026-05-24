@@ -66,3 +66,18 @@ export const loginValidationSchema = z.object({
       .min(6, "Password must be at least 6 characters"),
   }),
 });
+
+
+
+
+// FORGOT_PASSWORD ______________________________________
+export const forgotPasswordValidationSchema =
+  z.object({
+    body: z.object({
+      email: z
+        .string()
+        .email(
+          "Invalid email address"
+        ),
+    }),
+  });

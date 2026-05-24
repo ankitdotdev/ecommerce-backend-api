@@ -67,6 +67,36 @@ class AuthController {
       data: result,
     });
   });
+
+// FORGOT_PASSWORD ______________________________________
+forgotPassword = catchAsync(
+  async (req: Request, res: Response) => {
+
+    console.log(
+      "CONTROLLER: Forgot password request received"
+    );
+
+    const { email } = req.body;
+
+    const result =
+      await authServices.forgotPassword(
+        email
+      );
+
+    console.log(
+      "CONTROLLER: Forgot password completed"
+    );
+
+    res.status(200).json({
+      success: true,
+
+      message:
+        "Password reset OTP sent successfully",
+
+      data: result,
+    });
+  }
+);
 }
 
 export default new AuthController();

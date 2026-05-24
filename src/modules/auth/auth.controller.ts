@@ -3,6 +3,7 @@ import catchAsync from "../../utils/catchAsync";
 import authServices from "./auth.services";
 import {
   accessTokenCookieOptions,
+  refreshTokenCookieOptions,
   resetTokenCookieOptions,
 } from "../../config/cookies";
 
@@ -62,8 +63,7 @@ class AuthController {
 
     const result = await authServices.loginUser(payload);
 
-    console.log("CONTROLLER: Login completed");
-
+    // set access token cookie
     res.cookie(
       "accessToken",
 
@@ -72,7 +72,16 @@ class AuthController {
       accessTokenCookieOptions,
     );
 
-    console.log("CONTROLLER: Access token cookie set");
+    // set refresh token cookie
+    res.cookie(
+      "refreshToken",
+
+      result.refreshToken,
+
+      refreshTokenCookieOptions,
+    );
+
+    console.log("CONTROLLER: Auth cookies set");
 
     res.status(200).json({
       success: true,
@@ -149,6 +158,26 @@ class AuthController {
       message: "Password reset successful",
 
       data: result,
+    });
+  });
+
+  // CHANGE_PASSWORD _______________________________________
+
+  changePassword = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Change password request received");
+
+    const user = req.user;
+
+    const payload = req.body;
+
+    await authServices.changePassword(user, payload);
+
+    console.log("CONTROLLER: Password changed successfully");
+
+    res.status(200).json({
+      success: true,
+
+      message: "Password changed successfully",
     });
   });
 }

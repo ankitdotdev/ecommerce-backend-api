@@ -5,14 +5,15 @@
 // POST	/api/auth/resend-otp	Resend verification OTP
 // POST	/api/auth/login	Login verified user
 // POST	/api/auth/forgot-password	Send password reset OTP
-// POST	/api/auth/reset-password	Reset password using OTP
-
+// POST	/api/v1/auth/verify-reset-otp	Verify Reset OTP password
+// POST	/api/auth/reset-password	Reset password
 // PUT	/api/auth/change-password	Change password while logged in
 
 import { Router } from "express";
 import authController from "./auth.controller";
 import validateRequest from "../../middleware/schemal.validator";
 import {
+  changePasswordValidationSchema,
   forgotPasswordValidationSchema,
   loginValidationSchema,
   registerValidationSchema,
@@ -21,6 +22,7 @@ import {
   verifyOtpValidationSchema,
   verifyResetOtpValidationSchema,
 } from "./auth.schema";
+import authMiddleware from "../../middleware/auth.middleware";
 
 const authRouter = Router();
 
@@ -279,5 +281,47 @@ authRouter.post(
   validateRequest(resetPasswordValidationSchema),
 
   authController.resetPassword,
+);
+
+// CHANGE_PASSWORD _______________________________________
+
+/**
+ * @swagger
+ * /api/v1/auth/change-password:
+ *   put:
+ *     summary: Change password while logged in
+ *     tags:
+ *       - Auth
+ *     security:
+ *       - cookieAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - currentPassword
+ *               - newPassword
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 example: OldPassword@123
+ *               newPassword:
+ *                 type: string
+ *                 example: NewPassword@123
+ *     responses:
+ *       200:
+ *         description: Password changed successfully
+ */
+
+authRouter.put(
+  "/change-password",
+
+  authMiddleware,
+
+  validateRequest(changePasswordValidationSchema),
+
+  authController.changePassword,
 );
 export default authRouter;

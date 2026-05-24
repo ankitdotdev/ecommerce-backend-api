@@ -62,3 +62,15 @@ export const resetPasswordValidationSchema = z.object({
     newPassword: z.string().min(6, "Password must be at least 6 characters"),
   }),
 });
+
+// CHANGE_PASSWORD _______________________________________
+
+export const changePasswordValidationSchema = z.object({
+  body: z.object({
+    currentPassword: z.string().min(6, "Current password is required"),
+
+    newPassword: z
+      .string()
+      .min(6, "New password must be at least 6 characters"),
+  }),
+});

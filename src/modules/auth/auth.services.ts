@@ -3,7 +3,7 @@ import { IUser } from "../user/user.interface";
 import { User } from "../user/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
 import { v4 as uuidv4 } from "uuid";
-import { generateToken } from "../../utils/jwt";
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";
 
 class AuthService {
   async registerUser(payload: Partial<IUser>) {
@@ -215,53 +215,33 @@ class AuthService {
   async loginUser(payload: { email: string; password: string }) {
     console.log("STEP 1: Login started");
 
-    // find user with password
     const user = await User.findOne({
       email: payload.email,
     }).select("+password");
 
     console.log("STEP 2: User lookup completed");
 
-    // user not found
     if (!user) {
-      console.log("STEP 3: User not found");
-
       throw new Error("Invalid credentials");
     }
 
-    // email not verified
     if (!user.isEmailVerified) {
-      console.log("STEP 4: Email not verified");
-
       throw new Error("Email not verified");
     }
 
-    // blocked/inactive
-    if (user.status === "blocked" || user.status === "inactive") {
-      console.log("STEP 5: Account restricted");
-
-      throw new Error("Account access denied");
-    }
-
-    console.log("STEP 6: Verifying password");
-
-    // verify password
     const isPasswordMatched = await argon2.verify(
       user.password,
       payload.password,
     );
 
-    // invalid password
     if (!isPasswordMatched) {
-      console.log("STEP 7: Invalid password");
-
       throw new Error("Invalid credentials");
     }
 
-    console.log("STEP 8: Password verified");
+    console.log("STEP 3: Password verified");
 
     // generate access token
-    const accessToken = generateToken({
+    const accessToken = generateAccessToken({
       userId: user._id.toString(),
 
       email: user.email,
@@ -269,19 +249,34 @@ class AuthService {
       role: user.role,
     });
 
-    console.log("STEP 9: Access token generated");
+    // generate refresh token
+    const refreshToken = generateRefreshToken({
+      userId: user._id.toString(),
 
-    // update last login
+      email: user.email,
+
+      role: user.role,
+    });
+
+    console.log("STEP 4: Tokens generated");
+
+    // save refresh token
     user.set({
+      refreshToken,
+
+      refreshTokenExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+
       lastLoginAt: new Date(),
     });
 
     await user.save();
 
-    console.log("STEP 10: Last login updated");
+    console.log("STEP 5: Refresh token saved");
 
     return {
       accessToken,
+
+      refreshToken,
     };
   }
 
@@ -452,6 +447,68 @@ class AuthService {
     console.log("STEP 9: Password reset saved");
 
     return null;
+  }
+
+  // CHANGE_PASSWORD _______________________________________
+  async changePassword(
+    userData: any,
+
+    payload: {
+      currentPassword: string;
+      newPassword: string;
+    },
+  ) {
+    console.log("STEP 1: Change password started");
+
+    // find user
+    const user = await User.findById(userData.userId).select("+password");
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 3: User not found");
+
+      throw new Error("User not found");
+    }
+
+    console.log("STEP 4: Verifying current password");
+
+    // compare current password
+    const isPasswordMatched = await argon2.verify(
+      user.password,
+      payload.currentPassword,
+    );
+
+    // invalid password
+    if (!isPasswordMatched) {
+      console.log("STEP 5: Current password invalid");
+
+      throw new Error("Current password is incorrect");
+    }
+
+    console.log("STEP 6: Current password verified");
+
+    // hash new password
+    const hashedPassword = await argon2.hash(payload.newPassword);
+
+    console.log("STEP 7: New password hashed");
+
+    // update password
+    user.set({
+      password: hashedPassword,
+
+      passwordChangedAt: new Date(),
+    });
+
+    console.log("STEP 8: Password fields updated");
+
+    // save user
+    await user.save();
+
+    console.log("STEP 9: Password updated successfully");
+
+    return;
   }
 }
 

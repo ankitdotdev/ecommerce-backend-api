@@ -1,17 +1,8 @@
-import {
-  Schema,
-  model,
-} from "mongoose";
+import { Schema, model } from "mongoose";
 
-import {
-  IUser,
-  UserModel,
-} from "./user.interface";
+import { IUser, UserModel } from "./user.interface";
 
-const userSchema = new Schema<
-  IUser,
-  UserModel
->(
+const userSchema = new Schema<IUser, UserModel>(
   {
     // Basic Info
     name: {
@@ -54,10 +45,7 @@ const userSchema = new Schema<
     role: {
       type: String,
 
-      enum: [
-        "admin",
-        "customer",
-      ],
+      enum: ["admin", "customer"],
 
       default: "customer",
     },
@@ -65,11 +53,7 @@ const userSchema = new Schema<
     status: {
       type: String,
 
-      enum: [
-        "active",
-        "blocked",
-        "inactive",
-      ],
+      enum: ["active", "blocked", "inactive"],
 
       default: "active",
     },
@@ -82,6 +66,14 @@ const userSchema = new Schema<
     },
 
     emailVerifiedAt: {
+      type: Date,
+    },
+
+    otp: {
+      type: String,
+    },
+
+    otpExpiresAt: {
       type: Date,
     },
 
@@ -117,10 +109,7 @@ const userSchema = new Schema<
   },
   {
     timestamps: true,
-  }
+  },
 );
 
-export const User = model<
-  IUser,
-  UserModel
->("users", userSchema);
+export const User = model<IUser, UserModel>("users", userSchema);

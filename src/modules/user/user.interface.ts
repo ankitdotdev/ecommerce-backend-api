@@ -1,13 +1,8 @@
 import { Model } from "mongoose";
 
-export type UserRole =
-  | "admin"
-  | "customer";
+export type UserRole = "admin" | "customer";
 
-export type UserStatus =
-  | "active"
-  | "blocked"
-  | "inactive";
+export type UserStatus = "active" | "blocked" | "inactive";
 
 export interface IUser {
   // Basic Info
@@ -31,6 +26,10 @@ export interface IUser {
 
   emailVerifiedAt?: Date;
 
+  otp?: string;
+
+  otpExpiresAt?: Date;
+
   // Security
   lastLoginAt?: Date;
 
@@ -51,5 +50,4 @@ export interface IUser {
   updatedAt?: Date;
 }
 
-export interface UserModel
-  extends Model<IUser> {}
+export interface UserModel extends Model<IUser> {}

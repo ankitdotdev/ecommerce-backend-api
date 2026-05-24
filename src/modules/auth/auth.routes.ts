@@ -11,10 +11,11 @@
 import { Router } from "express";
 import authController from "./auth.controller";
 import validateRequest from "../../middleware/schemal.validator";
-import { registerValidationSchema } from "./auth.schema";
+import { registerValidationSchema, verifyOtpValidationSchema } from "./auth.schema";
 
 const authRouter = Router();
 
+// USER REGISTER _______________________________________________
 
 /**
  * @swagger
@@ -58,10 +59,41 @@ authRouter.post(
   validateRequest(registerValidationSchema),
   authController.registerUser,
 );
-authRouter.post(
-  "/register",
-  validateRequest(registerValidationSchema),
-  authController.registerUser,
-);
 
+// VERIFY OTP ____________________________________________________
+// auth.routes.ts
+
+/**
+ * @swagger
+ * /api/v1/auth/verify-otp:
+ *   post:
+ *     summary: Verify email OTP
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - otp
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: john@example.com
+ *               otp:
+ *                 type: string
+ *                 example: 123456
+ *     responses:
+ *       200:
+ *         description: OTP verified successfully
+ */
+
+authRouter.post(
+  "/verify-otp",
+  validateRequest(verifyOtpValidationSchema),
+  authController.verifyOtp,
+);
 export default authRouter;

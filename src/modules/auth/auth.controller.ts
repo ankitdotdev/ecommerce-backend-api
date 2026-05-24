@@ -3,23 +3,28 @@ import catchAsync from "../../utils/catchAsync";
 import authServices from "./auth.services";
 
 class AuthController {
+  registerUser = catchAsync(async (req: Request, res: Response) => {
+    const userData = req.body;
 
-  registerUser = catchAsync(
-    async (req: Request, res: Response) => {
+    const result = await authServices.registerUser(userData);
 
-      const userData = req.body;
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      data: result,
+    });
+  });
 
-      const result =
-        await authServices.registerUser(userData);
+  // VERIFY OTP CONTROLLER
+  verifyOtp = catchAsync(async (req: Request, res: Response) => {
+    const payload = req.body;
 
-      res.status(201).json({
-        success: true,
-        message: "User registered successfully",
-        data: result,
-      });
-    }
-  );
-
+    res.status(200).json({
+      success: true,
+      message: "OTP verified successfully",
+      data: payload,
+    });
+  });
 }
 
 export default new AuthController();

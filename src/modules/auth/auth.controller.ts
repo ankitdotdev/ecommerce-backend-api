@@ -48,6 +48,25 @@ class AuthController {
       data: result,
     });
   });
+
+  // LOGIN __________________________________
+  loginUser = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Login request received");
+
+    const payload = req.body;
+
+    const result = await authServices.loginUser(payload);
+
+    console.log("CONTROLLER: Login completed");
+
+    res.status(200).json({
+      success: true,
+
+      message: "Login successful",
+
+      data: result,
+    });
+  });
 }
 
 export default new AuthController();

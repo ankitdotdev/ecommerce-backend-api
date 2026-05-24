@@ -12,6 +12,7 @@ import { Router } from "express";
 import authController from "./auth.controller";
 import validateRequest from "../../middleware/schemal.validator";
 import {
+  loginValidationSchema,
   registerValidationSchema,
   resendOtpValidationSchema,
   verifyOtpValidationSchema,
@@ -134,5 +135,44 @@ authRouter.post(
   validateRequest(resendOtpValidationSchema),
 
   authController.resendOtp,
+);
+
+// LOGIN_________________________________________________________
+// auth.routes.ts
+
+/**
+ * @swagger
+ * /api/v1/auth/login:
+ *   post:
+ *     summary: Login verified user
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: ankitmishra.dev11@gmail.com
+ *               password:
+ *                 type: string
+ *                 example: Ankit@123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ */
+
+authRouter.post(
+  "/login",
+
+  validateRequest(loginValidationSchema),
+
+  authController.loginUser,
 );
 export default authRouter;

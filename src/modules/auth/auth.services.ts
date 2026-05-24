@@ -207,6 +207,67 @@ class AuthService {
 
     return null;
   }
+
+  // LOGIN  ____________________________________________________
+  async loginUser(payload: { email: string; password: string }) {
+    console.log("STEP 1: Login started");
+
+    // find user with password
+    const user = await User.findOne({
+      email: payload.email,
+    }).select("+password");
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 3: User not found");
+
+      throw new Error("Invalid credentials");
+    }
+
+    // email not verified
+    if (!user.isEmailVerified) {
+      console.log("STEP 4: Email not verified");
+
+      throw new Error("Email not verified");
+    }
+
+    // blocked/inactive check
+    if (user.status === "blocked" || user.status === "inactive") {
+      console.log("STEP 5: User account restricted");
+
+      throw new Error("Account access denied");
+    }
+
+    console.log("STEP 6: Verifying password");
+
+    // compare password
+    const isPasswordMatched = await argon2.verify(
+      user.password,
+      payload.password,
+    );
+
+    // invalid password
+    if (!isPasswordMatched) {
+      console.log("STEP 7: Invalid password");
+
+      throw new Error("Invalid credentials");
+    }
+
+    console.log("STEP 8: Password verified");
+
+    // update last login
+    user.set({
+      lastLoginAt: new Date(),
+    });
+
+    await user.save();
+
+    console.log("STEP 9: Last login updated");
+
+    return user;
+  }
 }
 
 export default new AuthService();

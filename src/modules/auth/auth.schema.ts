@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+
+
+// Register Schema
 export const registerValidationSchema = z.object({
   body: z.object({
     name: z
@@ -17,5 +20,20 @@ export const registerValidationSchema = z.object({
     phone: z
       .string()
       .optional(),
+  }),
+});
+
+
+
+// Verify Otp Schema
+export const verifyOtpValidationSchema = z.object({
+  body: z.object({
+    email: z
+      .string()
+      .email("Invalid email address"),
+
+    otp: z
+      .string()
+      .length(6, "OTP must be 6 digits"),
   }),
 });

@@ -126,12 +126,19 @@ Handles customer order processing.
 
 ## Authentication APIs
 
-| Method | Endpoint           | Description                |
-| ------ | ------------------ | -------------------------- |
-| POST   | /api/auth/register | Register new user          |
-| POST   | /api/auth/login    | Login user                 |
-| GET    | /api/auth/profile  | Get logged-in user profile |
-| PUT    | /api/auth/profile  | Update user profile        |
+| Method | Endpoint                   | Description                     |
+| ------ | -------------------------- | ------------------------------- |
+| POST   | /api/auth/register         | Register new user               |
+| POST   | /api/auth/verify-otp       | Verify email OTP                |
+| POST   | /api/auth/resend-otp       | Resend verification OTP         |
+| POST   | /api/auth/login            | Login verified user             |
+| POST   | /api/auth/forgot-password  | Send password reset OTP         |
+| POST   | /api/auth/verify-reset-otp | Verify reset password OTP       |
+| POST   | /api/auth/reset-password   | Reset password                  |
+| PUT    | /api/auth/change-password  | Change password while logged in |
+| POST   | /api/auth/refresh-token    | Refresh access token            |
+| POST   | /api/auth/logout           | Logout authenticated user       |
+
 
 ---
 

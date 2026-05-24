@@ -15,7 +15,7 @@ class AuthController {
     });
   });
 
-  // VERIFY OTP CONTROLLER
+  // VERIFY OTP
   verifyOtp = catchAsync(async (req: Request, res: Response) => {
     const { email, otp } = req.body;
 
@@ -25,6 +25,27 @@ class AuthController {
       success: true,
 
       message: "OTP verified successfully",
+
+      data: result,
+    });
+  });
+
+  // RESEND OTP
+  // auth.controller.ts
+
+  resendOtp = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Resend OTP request received");
+
+    const { email } = req.body;
+
+    const result = await authServices.resendOtp(email);
+
+    console.log("CONTROLLER: OTP resend completed");
+
+    res.status(200).json({
+      success: true,
+
+      message: "OTP resent successfully",
 
       data: result,
     });

@@ -151,6 +151,64 @@ class AuthService {
 
     return user;
   }
+
+  // RESEND OTP___________________________________________
+  // auth.services.ts
+
+  async resendOtp(email: string) {
+    console.log("STEP 1: Resend OTP started");
+
+    // check user exists
+    const user = await User.findOne({
+      email,
+    });
+
+    console.log("STEP 2: User lookup completed");
+
+    // user not found
+    if (!user) {
+      console.log("STEP 3: User not found");
+
+      throw new Error("User not found");
+    }
+
+    // already verified
+    if (user.isEmailVerified) {
+      console.log("STEP 4: Email already verified");
+
+      throw new Error("Email already verified");
+    }
+
+    console.log("STEP 5: Generating new OTP");
+
+    // generate otp
+    const otp = authEmailServices.generateOtp();
+
+    // generate expiry
+    const otpExpiresAt = authEmailServices.generateOtpExpiry();
+
+    console.log("STEP 6: OTP generated");
+
+    // update otp
+    user.set({
+      otp,
+      otpExpiresAt,
+    });
+
+    console.log("STEP 7: OTP fields updated");
+
+    // save user
+    await user.save();
+
+    console.log("STEP 8: OTP saved");
+
+    // send verification email
+    await authEmailServices.sendVerificationOtp(user.email, otp);
+
+    console.log("STEP 9: Verification email sent");
+
+    return null;
+  }
 }
 
 export default new AuthService();

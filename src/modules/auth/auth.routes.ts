@@ -11,7 +11,11 @@
 import { Router } from "express";
 import authController from "./auth.controller";
 import validateRequest from "../../middleware/schemal.validator";
-import { registerValidationSchema, verifyOtpValidationSchema } from "./auth.schema";
+import {
+  registerValidationSchema,
+  resendOtpValidationSchema,
+  verifyOtpValidationSchema,
+} from "./auth.schema";
 
 const authRouter = Router();
 
@@ -95,5 +99,40 @@ authRouter.post(
   "/verify-otp",
   validateRequest(verifyOtpValidationSchema),
   authController.verifyOtp,
+);
+
+// RESEND OTP _______________________________________________________________
+// auth.routes.ts
+
+/**
+ * @swagger
+ * /api/v1/auth/resend-otp:
+ *   post:
+ *     summary: Resend verification OTP
+ *     tags:
+ *       - Auth
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 example: ankitmishra.dev11@gmail.com
+ *     responses:
+ *       200:
+ *         description: OTP resent successfully
+ */
+
+authRouter.post(
+  "/resend-otp",
+
+  validateRequest(resendOtpValidationSchema),
+
+  authController.resendOtp,
 );
 export default authRouter;

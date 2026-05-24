@@ -7,8 +7,16 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import cookieParser from "cookie-parser";
+
+import swaggerUi from "swagger-ui-express";
+
 import globalErrorHandler from "./middleware/globalErrorHandler";
 
+import authRouter from "./modules/auth/auth.routes";
+
+import { swaggerSpec } from "./config/swagger";
+
+import { config } from "./config";
 
 const app: Application = express();
 
@@ -27,6 +35,14 @@ app.use(morgan("dev"));
 app.use(cookieParser());
 
 
+// swagger docs
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
+
+
 // test route
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -34,6 +50,13 @@ app.get("/", (req, res) => {
     message: "Server running successfully",
   });
 });
+
+
+// auth routes
+app.use(
+  `${config.apiPrefix}/auth`,
+  authRouter
+);
 
 
 // not found handler

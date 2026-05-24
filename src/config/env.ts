@@ -9,6 +9,8 @@ const envSchema = z.object({
     "test",
   ]),
 
+  API_PREFIX: z.string(),
+
   MONGO_URI: z.string(),
 
   JWT_SECRET: z.string().min(10),

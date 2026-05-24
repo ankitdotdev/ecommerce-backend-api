@@ -14,4 +14,6 @@ export const config = {
   jwtSecret: envConfig.JWT_SECRET,
 
   jwtExpiresIn: envConfig.JWT_EXPIRES_IN,
+
+  apiPrefix: envConfig.API_PREFIX,
 };

@@ -128,4 +128,4 @@ const userSchema = new Schema<IUser, UserModel>(
   },
 );
 
-export const User = model<IUser, UserModel>("users", userSchema);
+export const User = model<IUser, UserModel>("User", userSchema);

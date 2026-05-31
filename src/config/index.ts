@@ -25,4 +25,11 @@ export const config = {
   resendApiKey: envConfig.RESEND_API_KEY,
 
   emailFrom: envConfig.EMAIL_FROM,
+
+  // CLOUDINARY CONFIG
+  cloudinaryCloudName: envConfig.CLOUDINARY_CLOUD_NAME,
+
+  cloudinaryApiKey: envConfig.CLOUDINARY_API_KEY,
+
+  cloudinaryApiSecret: envConfig.CLOUDINARY_API_SECRET,
 };

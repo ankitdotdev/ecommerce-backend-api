@@ -102,6 +102,23 @@ class ProductController {
       }
     },
   );
+
+  // DELETE_PRODUCT_IMAGE _____________________________________________
+  deleteProductImage = catchAsync(async (req, res, next) => {
+    try {
+      await productServices.deleteProductImage(
+        req.params.id as string,
+        req.body.imageUrl,
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Product image deleted successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 }
 
 export default new ProductController();

@@ -19,6 +19,7 @@ import { swaggerSpec } from "./config/swagger";
 import { config } from "./config";
 import adminRouter from "./modules/admin/admin.routes";
 import productRouter from "./modules/products/products.route";
+import uploadRouter from "./modules/uploads/uploads.routes";
 
 const app: Application = express();
 
@@ -55,6 +56,7 @@ app.get("/", (req, res) => {
 app.use(`${config.apiPrefix}/auth`, authRouter);
 app.use(`${config.apiPrefix}/admin`, adminRouter);
 app.use(`${config.apiPrefix}/products`, productRouter);
+app.use(`${config.apiPrefix}/upload`, uploadRouter);
 
 // not found handler
 app.use((req, res) => {

@@ -133,3 +133,18 @@ export const deleteProductValidationSchema = z.object({
       .max(500, "Deletion reason cannot exceed 500 characters"),
   }),
 });
+
+
+// DELETE_PRODUCT_IMAGE _____________________________________________
+
+export const deleteProductImageValidationSchema = z.object({
+  params: z.object({
+    id: z.string().trim().min(1, "Product ID is required"),
+  }),
+
+  body: z.object({
+    imageUrl: z
+      .url("Please provide a valid image URL")
+      .min(1, "Image URL is required"),
+  }),
+});

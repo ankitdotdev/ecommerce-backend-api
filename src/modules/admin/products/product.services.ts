@@ -1,5 +1,6 @@
 import { ConflictError, NotFoundError } from "../../../utils/errors/AppError";
 import { generateSlug } from "../../../utils/string/generateSlug";
+import { deleteFromCloudinary } from "../../../utils/upload/cloudinary";
 import { IProduct, ProductStatus } from "../../products/products.interfaces";
 import { Product } from "../../products/products.model";
 import { IProductQuery } from "./products.types";
@@ -185,6 +186,28 @@ class ProductService {
     );
 
     return null;
+  }
+
+  // DELETE_PRODUCT_IMAGE _____________________________________________
+
+  async deleteProductImage(productId: string, imageUrl: string) {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    const imageExists = product.images.includes(imageUrl);
+
+    if (!imageExists) {
+      throw new NotFoundError("Image does not belong to this product");
+    }
+
+    await deleteFromCloudinary(imageUrl);
+
+    product.images = product.images.filter((image) => image !== imageUrl);
+
+    await product.save();
   }
 }
 export default new ProductService();

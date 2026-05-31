@@ -58,4 +58,8 @@ export interface IUser {
   updatedAt?: Date;
 }
 
+export const UserRole = {
+  ADMIN: "admin",
+  CUSTOMER: "customer",
+};
 export interface UserModel extends Model<IUser> {}

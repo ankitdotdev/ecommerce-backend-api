@@ -25,3 +25,25 @@ export const uploadToCloudinary = (
     Readable.from(buffer).pipe(uploadStream);
   });
 };
+
+export const deleteFromCloudinary = async (
+  imageUrl: string,
+): Promise<boolean> => {
+  if (!imageUrl) return false;
+
+  const uploadIndex = imageUrl.indexOf("/upload/");
+
+  if (uploadIndex === -1) {
+    return false;
+  }
+
+  const pathAfterUpload = imageUrl.substring(uploadIndex + "/upload/".length);
+
+  const publicId = pathAfterUpload
+    .replace(/^v\d+\//, "")
+    .replace(/\.[^/.]+$/, "");
+
+  const result = await cloudinary.uploader.destroy(publicId);
+
+  return result.result === "ok";
+};

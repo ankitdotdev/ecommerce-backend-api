@@ -17,6 +17,7 @@ import authRouter from "./modules/auth/auth.routes";
 import { swaggerSpec } from "./config/swagger";
 
 import { config } from "./config";
+import adminRouter from "./modules/admin/admin.routes";
 
 const app: Application = express();
 
@@ -51,6 +52,7 @@ app.get("/", (req, res) => {
 
 // auth routes
 app.use(`${config.apiPrefix}/auth`, authRouter);
+app.use(`${config.apiPrefix}/admin`, adminRouter);
 
 // not found handler
 app.use((req, res) => {

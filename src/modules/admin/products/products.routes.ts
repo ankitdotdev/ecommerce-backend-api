@@ -2,6 +2,7 @@ import { Router } from "express";
 import validateRequest from "../../../middleware/schemal.validator";
 import {
   createProductValidationSchema,
+  deleteProductImageValidationSchema,
   deleteProductValidationSchema,
   getAllProductsValidationSchema,
   productIdValidationSchema,
@@ -294,6 +295,69 @@ productRouter.delete(
   "/:productId",
   validateRequest(deleteProductValidationSchema),
   productsController.deleteProduct,
+);
+
+// DELETE_PRODUCT_IMAGE _____________________________________________
+/**
+ * @swagger
+ * /api/v1/admin/products/{id}/image:
+ *   delete:
+ *     summary: Delete a product image
+ *     description: Remove an image from a product and permanently delete it from Cloudinary.
+ *     tags:
+ *       - Admin Products
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         example: 683b04b57b40dc8c0f0d9e12
+ *         description: Product ID
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - imageUrl
+ *             properties:
+ *               imageUrl:
+ *                 type: string
+ *                 format: uri
+ *                 example: https://res.cloudinary.com/dyrduh6wh/image/upload/v1780250408/products/yjy007lowdipcnvdwfwl.png
+ *                 description: Image URL to be removed from the product
+ *
+ *     responses:
+ *       200:
+ *         description: Product image deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Product image deleted successfully
+ *
+ *       404:
+ *         description: Product not found or image does not belong to the product
+ *
+ *       400:
+ *         description: Invalid request data
+ *
+ *       401:
+ *         description: Unauthorized
+ */
+productRouter.delete(
+  "/:id/image",
+  validateRequest(deleteProductImageValidationSchema),
+  productsController.deleteProductImage,
 );
 
 export default productRouter;

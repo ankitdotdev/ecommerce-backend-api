@@ -14,6 +14,7 @@ export interface IProduct {
   price: number;
   stock: number;
 
+
   images: string[];
   thumbnailIndex?: number;
 

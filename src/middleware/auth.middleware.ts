@@ -4,6 +4,10 @@ import jwt, { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
 import { config } from "../config";
 import { UserRole } from "../modules/users/user.interface";
 import { IAuthUser } from "../types/auth.types";
+import {
+  UnauthorizedError,
+  ForbiddenError,
+} from "../utils/AppError";
 
 class AuthMiddleware {
   auth = (req: Request, res: Response, next: NextFunction) => {
@@ -11,21 +15,34 @@ class AuthMiddleware {
       const token = req.cookies.accessToken;
 
       if (!token) {
-        throw new Error("Access token is required");
+        throw new UnauthorizedError(
+          "Please sign in to continue."
+        );
       }
 
-      const decoded = jwt.verify(token, config.jwtSecret) as IAuthUser;
+      const decoded = jwt.verify(
+        token,
+        config.jwtSecret
+      ) as IAuthUser;
 
       req.user = decoded;
 
       next();
     } catch (error) {
       if (error instanceof TokenExpiredError) {
-        return next(new Error("Session expired. Please login again."));
+        return next(
+          new UnauthorizedError(
+            "Your session has expired. Please sign in again."
+          )
+        );
       }
 
       if (error instanceof JsonWebTokenError) {
-        return next(new Error("Invalid access token."));
+        return next(
+          new UnauthorizedError(
+            "Authentication failed. Please sign in again."
+          )
+        );
       }
 
       next(error);
@@ -34,7 +51,9 @@ class AuthMiddleware {
 
   admin = (req: Request, res: Response, next: NextFunction) => {
     if (req.user?.role !== UserRole.ADMIN) {
-      throw new Error("You do not have permission to access this resource.");
+      throw new ForbiddenError(
+        "You do not have permission to access this resource."
+      );
     }
 
     next();
@@ -42,7 +61,9 @@ class AuthMiddleware {
 
   customer = (req: Request, res: Response, next: NextFunction) => {
     if (req.user?.role !== UserRole.CUSTOMER) {
-      throw new Error("You do not have permission to access this resource.");
+      throw new ForbiddenError(
+        "You do not have permission to access this resource."
+      );
     }
 
     next();

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import validateRequest from "../../../middleware/schemal.validator";
-import { createProductValidationSchema } from "./products.schema";
+import { createProductValidationSchema, getAllProductsValidationSchema } from "./products.schema";
 import productsController from "./products.controller";
 
 // Product APIs
@@ -13,6 +13,9 @@ import productsController from "./products.controller";
 // DELETE   /api/v1/admin/products/:productId     Soft delete product
 
 const productRouter = Router();
+
+
+// CREATE_PRODUCT ____________________________________
 
 /**
  * @swagger
@@ -78,6 +81,78 @@ productRouter.post(
   "/",
   validateRequest(createProductValidationSchema),
   productsController.createProduct,
+);
+
+
+// GET_ALL_PRODUCTS ___________________________________
+/**
+ * @swagger
+ * /api/v1/admin/products:
+ *   get:
+ *     tags:
+ *       - Admin Products
+ *     summary: Get all products
+ *     description: Retrieve a paginated list of products with search, filtering, and sorting options.
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *         description: Page number
+ *
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *         description: Number of products per page
+ *
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *           example: Nike
+ *         description: Search products by product name
+ *
+ *       - in: query
+ *         name: status
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - DRAFT
+ *             - ACTIVE
+ *             - INACTIVE
+ *         description: Filter products by status
+ *
+ *       - in: query
+ *         name: sort
+ *         schema:
+ *           type: string
+ *           enum:
+ *             - newest
+ *             - oldest
+ *             - price_asc
+ *             - price_desc
+ *         description: Sort products
+ *
+ *     responses:
+ *       200:
+ *         description: Products retrieved successfully
+ *       401:
+ *         description: Authentication required
+ *       403:
+ *         description: Access denied
+ */
+productRouter.get(
+  "/",
+  validateRequest(getAllProductsValidationSchema),
+  productsController.getAllProducts,
 );
 
 export default productRouter;

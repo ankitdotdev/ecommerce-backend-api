@@ -62,6 +62,25 @@ class ProductController {
       }
     },
   );
+  // GET_PRODUCT_DETAILS _____________________________________________
+
+  getProductDetails = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await productServices.getProductDetails(
+          req.params.productId as string,
+        );
+
+        res.status(200).json({
+          success: true,
+          message: "Product retrieved successfully",
+          data: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 }
 
 export default new ProductController();

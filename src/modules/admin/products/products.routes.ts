@@ -3,6 +3,7 @@ import validateRequest from "../../../middleware/schemal.validator";
 import {
   createProductValidationSchema,
   getAllProductsValidationSchema,
+  productIdValidationSchema,
   updateProductValidationSchema,
 } from "./products.schema";
 import productsController from "./products.controller";
@@ -157,6 +158,34 @@ productRouter.get(
   productsController.getAllProducts,
 );
 
+// GET_PRODUCT_DETAILS _____________________________________________
+/**
+ * @swagger
+ * /api/v1/admin/products/{productId}:
+ *   get:
+ *     summary: Get product details
+ *     tags:
+ *       - Admin Products
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product retrieved successfully
+ *       404:
+ *         description: Product not found
+ */
+productRouter.get(
+  "/:productId",
+  validateRequest(productIdValidationSchema),
+  productsController.getProductDetails,
+);
+
 // UPDATE_PRODUCTS ___________________________________
 
 /**
@@ -211,7 +240,7 @@ productRouter.get(
  */
 productRouter.patch(
   "/:productId",
-  validateRequest(updateProductValidationSchema), 
+  validateRequest(updateProductValidationSchema),
   productsController.updateProduct,
 );
 

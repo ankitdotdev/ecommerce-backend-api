@@ -142,5 +142,20 @@ class ProductService {
 
     return updatedProduct;
   }
+
+  // GET_PRODUCT_DETAILS _____________________________________________
+
+  async getProductDetails(productId: string) {
+    const product = await Product.findOne({
+      _id: productId,
+      isDeleted: false,
+    }).populate("createdBy", "name email");
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    return product;
+  }
 }
 export default new ProductService();

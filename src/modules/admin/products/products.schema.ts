@@ -104,12 +104,32 @@ export const updateProductValidationSchema = z.object({
   }),
 });
 
+const objectIdRegex = /^[0-9a-fA-F]{24}$/;
+
+
 // PRODUCT_ID_VALIDATION _____________________________________
 export const productIdValidationSchema = z.object({
   params: z.object({
     productId: z
       .string()
       .min(1, "Product ID is required")
-      .regex(/^[0-9a-fA-F]{24}$/, "Invalid product ID"),
+      .regex(objectIdRegex, "Invalid product ID"),
+  }),
+});
+
+
+// DELETE_PRODUCT_VALIDATION _____________________________________
+
+export const deleteProductValidationSchema = z.object({
+  params: z.object({
+    productId: z.string().regex(objectIdRegex, "Invalid product ID"),
+  }),
+
+  body: z.object({
+    reason: z
+      .string()
+      .trim()
+      .min(5, "Deletion reason must be at least 5 characters")
+      .max(500, "Deletion reason cannot exceed 500 characters"),
   }),
 });

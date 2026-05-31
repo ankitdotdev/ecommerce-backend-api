@@ -157,5 +157,34 @@ class ProductService {
 
     return product;
   }
+
+  // DELETE_PRODUCT ____________________________________________________
+
+  async deleteProduct(productId: string, userId: string, reason: string) {
+    const product = await Product.findById(productId);
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    if (product.isDeleted) {
+      throw new ConflictError("Product has already been deleted");
+    }
+
+    await Product.findByIdAndUpdate(
+      productId,
+      {
+        isDeleted: true,
+        deletedAt: new Date(),
+        deletedBy: userId,
+        deleteReason: reason.trim(),
+      },
+      {
+        new: true,
+      },
+    );
+
+    return null;
+  }
 }
 export default new ProductService();

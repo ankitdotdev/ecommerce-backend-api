@@ -2,6 +2,7 @@ import { Router } from "express";
 import validateRequest from "../../../middleware/schemal.validator";
 import {
   createProductValidationSchema,
+  deleteProductValidationSchema,
   getAllProductsValidationSchema,
   productIdValidationSchema,
   updateProductValidationSchema,
@@ -242,6 +243,57 @@ productRouter.patch(
   "/:productId",
   validateRequest(updateProductValidationSchema),
   productsController.updateProduct,
+);
+
+/**
+ * @swagger
+ * /api/v1/admin/products/{productId}:
+ *   delete:
+ *     summary: Delete a product
+ *     description: Soft delete a product by marking it as deleted and storing the deletion reason.
+ *     tags:
+ *       - Admin Products
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Product ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - reason
+ *             properties:
+ *               reason:
+ *                 type: string
+ *                 minLength: 5
+ *                 maxLength: 500
+ *                 example: Product discontinued and replaced with a newer version
+ *     responses:
+ *       200:
+ *         description: Product deleted successfully
+ *       400:
+ *         description: Validation failed
+ *       401:
+ *         description: Authentication required
+ *       403:
+ *         description: Access denied
+ *       404:
+ *         description: Product not found
+ *       409:
+ *         description: Product has already been deleted
+ */
+productRouter.delete(
+  "/:productId",
+  validateRequest(deleteProductValidationSchema),
+  productsController.deleteProduct,
 );
 
 export default productRouter;

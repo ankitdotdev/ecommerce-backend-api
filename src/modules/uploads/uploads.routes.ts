@@ -4,9 +4,11 @@ import uploadsController from "./uploads.controller";
 import { multerErrorHandler } from "../../utils/errors/multerErrorHandler";
 import validateRequest from "../../middleware/schemal.validator";
 import { deleteImageValidationSchema } from "./uploads.schema";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const uploadRouter = Router();
 
+uploadRouter.use(authMiddleware.auth);
 // UPLOAD_IMAGE ________________________________________________________________
 /**
  * @swagger

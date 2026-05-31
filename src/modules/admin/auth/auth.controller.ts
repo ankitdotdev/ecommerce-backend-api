@@ -42,6 +42,39 @@ class AuthController {
       message: "Login successful",
     });
   });
+
+  // LOGOUT ___________________________________________________________
+  logoutUser = catchAsync(async (req: Request, res: Response) => {
+    console.log("CONTROLLER: Logout request received");
+
+    const user = req.user;
+
+    await authServices.logoutUser(user);
+
+    console.log("CONTROLLER: Logout completed");
+
+    // clear access token cookie
+    res.clearCookie(
+      "accessToken",
+
+      accessTokenCookieOptions,
+    );
+
+    // clear refresh token cookie
+    res.clearCookie(
+      "refreshToken",
+
+      refreshTokenCookieOptions,
+    );
+
+    console.log("CONTROLLER: Auth cookies cleared");
+
+    res.status(200).json({
+      success: true,
+
+      message: "Logout successful",
+    });
+  });
 }
 
 export default new AuthController();

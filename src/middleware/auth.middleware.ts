@@ -7,7 +7,7 @@ import { IAuthUser } from "../types/auth.types";
 import {
   UnauthorizedError,
   ForbiddenError,
-} from "../utils/AppError";
+} from "../utils/errors/AppError";
 
 class AuthMiddleware {
   auth = (req: Request, res: Response, next: NextFunction) => {

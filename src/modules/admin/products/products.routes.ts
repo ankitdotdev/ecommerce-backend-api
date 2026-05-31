@@ -1,6 +1,10 @@
 import { Router } from "express";
 import validateRequest from "../../../middleware/schemal.validator";
-import { createProductValidationSchema, getAllProductsValidationSchema } from "./products.schema";
+import {
+  createProductValidationSchema,
+  getAllProductsValidationSchema,
+  updateProductValidationSchema,
+} from "./products.schema";
 import productsController from "./products.controller";
 
 // Product APIs
@@ -13,7 +17,6 @@ import productsController from "./products.controller";
 // DELETE   /api/v1/admin/products/:productId     Soft delete product
 
 const productRouter = Router();
-
 
 // CREATE_PRODUCT ____________________________________
 
@@ -82,7 +85,6 @@ productRouter.post(
   validateRequest(createProductValidationSchema),
   productsController.createProduct,
 );
-
 
 // GET_ALL_PRODUCTS ___________________________________
 /**
@@ -153,6 +155,64 @@ productRouter.get(
   "/",
   validateRequest(getAllProductsValidationSchema),
   productsController.getAllProducts,
+);
+
+// UPDATE_PRODUCTS ___________________________________
+
+/**
+ * @swagger
+ * /api/v1/admin/products/{productId}:
+ *   patch:
+ *     summary: Update product
+ *     tags:
+ *       - Admin Products
+ *     security:
+ *       - cookieAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: productId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               price:
+ *                 type: number
+ *               stock:
+ *                 type: number
+ *               category:
+ *                 type: string
+ *               images:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - DRAFT
+ *                   - ACTIVE
+ *                   - INACTIVE
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ */
+productRouter.patch(
+  "/:productId",
+  validateRequest(updateProductValidationSchema), 
+  productsController.updateProduct,
 );
 
 export default productRouter;

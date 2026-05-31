@@ -1,4 +1,4 @@
-import { ConflictError } from "../../../utils/errors/AppError";
+import { ConflictError, NotFoundError } from "../../../utils/errors/AppError";
 import { generateSlug } from "../../../utils/string/generateSlug";
 import { IProduct, ProductStatus } from "../../products/products.interfaces";
 import { Product } from "../../products/products.model";
@@ -91,6 +91,56 @@ class ProductService {
       },
       data: products,
     };
+  }
+
+  // UPDATE_PRODUCTS ___________________________________
+
+  async updateProduct(
+    productId: string,
+    payload: Partial<IProduct>,
+    userId: string,
+  ) {
+    const product = await Product.findOne({
+      _id: productId,
+      isDeleted: false,
+    });
+
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    // If name changes -> regenerate slug
+    if (payload.name && payload.name !== product.name) {
+      const slug = generateSlug(payload.name);
+
+      const existingProduct = await Product.findOne({
+        slug,
+        isDeleted: false,
+        _id: { $ne: productId },
+      });
+
+      if (existingProduct) {
+        throw new ConflictError("A product with this name already exists.");
+      }
+
+      payload.slug = slug;
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        $set: {
+          ...payload,
+          updatedBy: userId,
+        },
+      },
+      {
+        new: true,
+        runValidators: true,
+      },
+    );
+
+    return updatedProduct;
   }
 }
 export default new ProductService();

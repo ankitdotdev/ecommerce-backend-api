@@ -41,6 +41,27 @@ class ProductController {
       next(error);
     }
   };
+
+  // UPDATE_PRODUCTS ___________________________________
+  updateProduct = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await productServices.updateProduct(
+          req.params.productId as string,
+          req.body,
+          req.user?.userId!,
+        );
+
+        res.status(200).json({
+          success: true,
+          message: "Product updated successfully",
+          data: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 }
 
 export default new ProductController();

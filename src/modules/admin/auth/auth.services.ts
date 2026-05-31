@@ -1,6 +1,6 @@
 import { generateAccessToken, generateRefreshToken } from "../../../utils/jwt";
-import { UserRole } from "../../user/user.interface";
-import { User } from "../../user/user.model";
+import { UserRole } from "../../users/user.interface";
+import { User } from "../../users/user.model";
 import argon2 from "argon2";
 
 class AuthService {

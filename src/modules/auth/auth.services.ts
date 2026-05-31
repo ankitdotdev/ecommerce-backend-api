@@ -1,6 +1,6 @@
 import argon2 from "argon2";
-import { IUser, UserRole } from "../user/user.interface";
-import { User } from "../user/user.model";
+import { IUser, UserRole } from "../users/user.interface";
+import { User } from "../users/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
 import { v4 as uuidv4 } from "uuid";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt";

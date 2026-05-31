@@ -1,28 +1,23 @@
-# E-Commerce Backend API System
+# E-Commerce Backend API
 
-## Project Overview
+## Overview
 
-This project focuses on the development of a scalable and secure RESTful backend API for an E-Commerce platform using Node.js, TypeScript, MongoDB, and Swagger documentation.
+A scalable and production-oriented E-Commerce backend built with Node.js, TypeScript, Express, and MongoDB.
 
-The system is designed to handle core E-Commerce operations such as user authentication, product management, cart management, order processing, and image uploads through a modular backend architecture.
+The project follows a modular architecture and focuses on backend engineering best practices including:
 
-The primary objective of the project is to implement production-style backend engineering practices including REST API design, authentication and authorization, database modeling, middleware handling, validation, error management, and API documentation.
+* RESTful API design
+* JWT Authentication & Authorization
+* Role-Based Access Control
+* Schema Validation using Zod
+* Swagger API Documentation
+* MongoDB Data Modeling
+* Cloudinary File Management
+* Error Handling Middleware
+* Service Layer Architecture
+* TypeScript Type Safety
 
-The backend exposes secure API endpoints that can be consumed by frontend applications, mobile applications, or third-party systems.
-
----
-
-# Project Objectives
-
-* Develop a secure RESTful API using Node.js and TypeScript
-* Design scalable backend architecture for E-Commerce operations
-* Implement JWT-based authentication and authorization
-* Create CRUD operations for products, users, carts, and orders
-* Manage product image uploads
-* Integrate MongoDB for persistent data storage
-* Implement middleware for validation and error handling
-* Generate API documentation using Swagger/OpenAPI
-* Follow modular and maintainable backend development practices
+The API is designed to support both customer-facing and admin-facing operations.
 
 ---
 
@@ -37,212 +32,391 @@ The backend exposes secure API endpoints that can be consumed by frontend applic
 ## Database
 
 * MongoDB
-* Mongoose ODM
+* Mongoose
 
 ## Authentication & Security
 
-* JWT (JSON Web Tokens)
-* bcrypt
+- JWT Access Tokens
+- JWT Refresh Tokens
+- HTTP Only Cookies
+- Secure Cookie-Based Authentication
+- Password Hashing using bcrypt
+- Role-Based Access Control (RBAC)
+- Protected Route Middleware
+- Zod Request Validation
+- Environment Variable Validation
+- Global Error Handling
+
+### Authentication Features
+
+- User Registration
+- Email Verification via OTP
+- Login & Logout
+- Password Reset via OTP
+- Refresh Token Rotation
+- HTTP Only Cookie Storage
+- Role-Based Authorization
+
+## Validation
+
+* Zod
 
 ## API Documentation
 
 * Swagger / OpenAPI
 
-## File Upload
+## File Upload & Media
 
 * Multer
+* Cloudinary
 
-## Development Tools
+## Email Services
 
-* Postman
-* Nodemon
-* dotenv
-
----
-
-# Core Modules
-
-## 1. Authentication Module
-
-Handles user registration, login, token generation, and authorization.
-
-### Features
-
-* User registration
-* User login
-* Password hashing
-* JWT token generation
-* Protected routes
-* Role-based authorization
+* Resend
 
 ---
 
-## 2. Product Management Module
+# Environment Variables
 
-Handles product-related operations for the E-Commerce platform.
+```env
+PORT=
+NODE_ENV=
+API_PREFIX=
 
-### Features
+MONGO_URI=
 
-* Add products
-* Update products
-* Delete products
-* Fetch all products
-* Fetch single product
-* Product image upload
-* Product categorization
+JWT_ACCESS_SECRET=
+JWT_ACCESS_EXPIRES_IN=
 
----
+JWT_REFRESH_SECRET=
+JWT_REFRESH_EXPIRES_IN=
 
-## 3. Cart Management Module
+RESEND_API_KEY=
+EMAIL_FROM=
 
-Handles customer cart operations.
-
-### Features
-
-* Add item to cart
-* Remove item from cart
-* Update cart quantity
-* Fetch user cart
-* Clear cart
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
 
 ---
 
-## 4. Order Management Module
+# Project Architecture
 
-Handles customer order processing.
-
-### Features
-
-* Create order
-* Fetch user orders
-* Fetch order by ID
-* Update order status
-* Cancel order
-* Order history tracking
-
----
-
-# API Overview
-
-## Authentication APIs
-
-| Method | Endpoint                   | Description                     |
-| ------ | -------------------------- | ------------------------------- |
-| POST   | /api/auth/register         | Register new user               |
-| POST   | /api/auth/verify-otp       | Verify email OTP                |
-| POST   | /api/auth/resend-otp       | Resend verification OTP         |
-| POST   | /api/auth/login            | Login verified user             |
-| POST   | /api/auth/forgot-password  | Send password reset OTP         |
-| POST   | /api/auth/verify-reset-otp | Verify reset password OTP       |
-| POST   | /api/auth/reset-password   | Reset password                  |
-| PUT    | /api/auth/change-password  | Change password while logged in |
-| POST   | /api/auth/refresh-token    | Refresh access token            |
-| POST   | /api/auth/logout           | Logout authenticated user       |
-
+```text
+src
+├── modules
+│   ├── auth
+│   ├── categories
+│   ├── products
+│   ├── uploads
+│   ├── cart
+│   └── admin
+│
+├── middleware
+├── utils
+├── config
+├── routes
+└── app.ts
+```
 
 ---
 
-## Product APIs
+# Implemented Modules
 
-| Method | Endpoint             | Description          |
-| ------ | -------------------- | -------------------- |
-| GET    | /api/products        | Fetch all products   |
-| GET    | /api/products/:id    | Fetch single product |
-| POST   | /api/products        | Create product       |
-| PUT    | /api/products/:id    | Update product       |
-| DELETE | /api/products/:id    | Delete product       |
-| POST   | /api/products/upload | Upload product image |
+## Authentication Module
 
----
+### Customer Authentication APIs
 
-## Cart APIs
+| Method | Endpoint                      | Description             |
+| ------ | ----------------------------- | ----------------------- |
+| POST   | /api/v1/auth/register         | Register user           |
+| POST   | /api/v1/auth/verify-otp       | Verify email OTP        |
+| POST   | /api/v1/auth/resend-otp       | Resend OTP              |
+| POST   | /api/v1/auth/login            | Login user              |
+| POST   | /api/v1/auth/forgot-password  | Send password reset OTP |
+| POST   | /api/v1/auth/verify-reset-otp | Verify reset OTP        |
+| POST   | /api/v1/auth/reset-password   | Reset password          |
+| PATCH  | /api/v1/auth/change-password  | Change password         |
+| POST   | /api/v1/auth/refresh-token    | Refresh access token    |
+| POST   | /api/v1/auth/logout           | Logout user             |
 
-| Method | Endpoint             | Description           |
-| ------ | -------------------- | --------------------- |
-| GET    | /api/cart            | Fetch user cart       |
-| POST   | /api/cart            | Add item to cart      |
-| PUT    | /api/cart/:productId | Update cart item      |
-| DELETE | /api/cart/:productId | Remove item from cart |
-| DELETE | /api/cart            | Clear cart            |
+### Admin Authentication APIs
 
----
-
-## Order APIs
-
-| Method | Endpoint        | Description         |
-| ------ | --------------- | ------------------- |
-| POST   | /api/orders     | Create order        |
-| GET    | /api/orders     | Fetch user orders   |
-| GET    | /api/orders/:id | Fetch order details |
-| PUT    | /api/orders/:id | Update order status |
-| DELETE | /api/orders/:id | Cancel order        |
+| Method | Endpoint                  | Description  |
+| ------ | ------------------------- | ------------ |
+| POST   | /api/v1/admin/auth/login  | Admin login  |
+| POST   | /api/v1/admin/auth/logout | Admin logout |
 
 ---
 
-# Estimated API Count
+## Category Module
 
-| Module         | Approx APIs |
-| -------------- | ----------- |
-| Authentication | 4           |
-| Products       | 6           |
-| Cart           | 5           |
-| Orders         | 5           |
-| Total          | 20+ APIs    |
+### Public APIs
 
-The project can be further extended with:
+| Method | Endpoint                 | Description           |
+| ------ | ------------------------ | --------------------- |
+| GET    | /api/v1/categories       | Get active categories |
+| GET    | /api/v1/categories/:slug | Get category details  |
 
-* Payment gateway integration
-* Wishlist module
-* Admin dashboard APIs
-* Product reviews and ratings
-* Inventory management
-* Search and filtering
+### Admin APIs
+
+| Method | Endpoint                             | Description          |
+| ------ | ------------------------------------ | -------------------- |
+| POST   | /api/v1/admin/categories             | Create category      |
+| GET    | /api/v1/admin/categories             | Get all categories   |
+| GET    | /api/v1/admin/categories/:categoryId | Get category details |
+| PATCH  | /api/v1/admin/categories/:categoryId | Update category      |
+| DELETE | /api/v1/admin/categories/:categoryId | Delete category      |
+
+---
+
+## Product Module
+
+### Public APIs
+
+| Method | Endpoint               | Description         |
+| ------ | ---------------------- | ------------------- |
+| GET    | /api/v1/products       | Get active products |
+| GET    | /api/v1/products/:slug | Get product details |
+
+Features:
+
 * Pagination
-* Coupon system
+* Search
+* Category Filtering
+* Sorting
+* Product Slugs
+
+### Admin APIs
+
+| Method | Endpoint                          | Description          |
+| ------ | --------------------------------- | -------------------- |
+| POST   | /api/v1/admin/products            | Create product       |
+| GET    | /api/v1/admin/products            | Get all products     |
+| GET    | /api/v1/admin/products/:productId | Get product details  |
+| PATCH  | /api/v1/admin/products/:productId | Update product       |
+| DELETE | /api/v1/admin/products/:productId | Soft delete product  |
+| DELETE | /api/v1/admin/products/:id/image  | Delete product image |
+
+Features:
+
+* Product Status Management
+* Draft Products
+* Active Products
+* Inactive Products
+* Soft Delete
+* Image Management
+* Cloudinary Integration
+* Product Tags
+
+---
+
+## Upload Module
+
+Protected endpoints used for image management.
+
+| Method | Endpoint       | Description           |
+| ------ | -------------- | --------------------- |
+| POST   | /api/v1/upload | Upload image          |
+| DELETE | /api/v1/upload | Delete uploaded image |
+
+Features:
+
+* Cloudinary Upload
+* Cloudinary Deletion
+* File Type Validation
+* File Size Validation
+* Memory Storage Uploads
+
+---
+
+## Cart Module
+
+Authenticated customer cart management.
+
+| Method | Endpoint                      | Description              |
+| ------ | ----------------------------- | ------------------------ |
+| GET    | /api/v1/cart                  | Get current user's cart  |
+| POST   | /api/v1/cart/items            | Add product to cart      |
+| PATCH  | /api/v1/cart/items/:productId | Update cart quantity     |
+| DELETE | /api/v1/cart/items/:productId | Remove product from cart |
+| DELETE | /api/v1/cart                  | Clear cart               |
+
+Features:
+
+* Stock Validation
+* Product Availability Validation
+* Cart Quantity Updates
+* Maximum Cart Item Limits
+* Automatic Cart Creation
+
+---
+
+# Current Progress
+
+## Completed
+
+* Authentication Module
+* Admin Authentication Module
+* Category Module
+* Product Module
+* Upload Module
+* Cart Module
+* JWT Authentication
+* Role-Based Authorization
+* Swagger Documentation
+* Zod Validation
+* Cloudinary Integration
+* Resend Email Integration
+
+---
+
+# Pending Modules
+
+## User Profile & Address Module
+
+Planned APIs:
+
+### Profile APIs
+
+| Method | Endpoint                        |
+| -------| ------------------------------- |
+| GET    | /api/v1/profile                 |
+| PATCH  | /api/v1/profile                 |
+| PATCH  | /api/v1/profile/change-password |
+
+### Address APIs
+
+| Method | Endpoint                        |
+| -------| ------------------------------- |
+| GET    | /api/v1/addresses              |
+| POST   | /api/v1/addresses              |
+| GET    | /api/v1/addresses/:addressId   |
+| PATCH  | /api/v1/addresses/:addressId   |
+| DELETE | /api/v1/addresses/:addressId   |
+
+---
+
+## Wishlist Module
+
+Planned APIs:
+
+| Method | Endpoint                          |
+| ------ | --------------------------------- |
+| GET    | /api/v1/wishlist                  |
+| POST   | /api/v1/wishlist/items            |
+| DELETE | /api/v1/wishlist/items/:productId |
+
+---
+
+## Order Module
+
+Planned APIs:
+
+| Method | Endpoint           |
+| ------ | ------------------ |
+| POST   | /api/v1/orders     |
+| GET    | /api/v1/orders     |
+| GET    | /api/v1/orders/:id |
+
+### Admin Order APIs
+
+| Method | Endpoint                        |
+| ------ | ------------------------------- |
+| GET    | /api/v1/admin/orders            |
+| GET    | /api/v1/admin/orders/:id        |
+| PATCH  | /api/v1/admin/orders/:id/status |
+
+---
+
+## Payment Module
+
+Planned Features:
+
+* Razorpay Integration
+* Create Payment Order
+* Verify Payment
+* Payment Status Tracking
+* Order Payment Synchronization
+
+---
+
+## Dashboard Module
+
+Planned Features:
+
+* Total Users
+* Total Orders
+* Total Products
+* Total Revenue
+* Recent Orders
+* Top Selling Products
 
 ---
 
 # Security Features
 
-* JWT Authentication
-* Password Hashing using bcrypt
-* Protected Routes Middleware
-* Request Validation
-* Environment Variable Protection
-* Error Handling Middleware
+* JWT Access Tokens
+* Refresh Token Support
+* Password Hashing (bcrypt)
 * Role-Based Access Control
+* Protected Routes
+* Zod Request Validation
+* Environment Variable Validation
+* Global Error Handling
+* File Upload Validation
 
 ---
 
-# Swagger API Documentation
+# API Documentation
 
-Swagger/OpenAPI documentation is implemented to provide:
+Swagger/OpenAPI documentation is integrated for all implemented modules.
 
-* Interactive API testing
-* Endpoint documentation
-* Request/response schema visualization
-* Authentication testing support
+Documentation includes:
 
-The Swagger UI allows developers and frontend teams to easily understand and integrate the backend APIs.
-
----
-
-# Expected Outcomes
-
-By completing this project, the following outcomes are achieved:
-
-* Understanding of RESTful API development
-* Experience with backend architecture design
-* Practical implementation of authentication systems
-* Knowledge of MongoDB schema modeling
-* API documentation experience using Swagger
-* Understanding of middleware and error handling
-* Experience with production-style backend workflows
+* Request Schemas
+* Response Schemas
+* Authentication Requirements
+* Route Descriptions
+* Interactive API Testing
 
 ---
 
-# Conclusion
+# Future Enhancements
 
-This project demonstrates the implementation of a modern E-Commerce backend system using Node.js, TypeScript, and MongoDB. The backend architecture focuses on scalability, modularity, security, and maintainability while following industry-standard REST API development practices.
+* Product Reviews & Ratings
+* Coupons & Discounts
+* Inventory Reports
+* Analytics Dashboard
+* Order Tracking
+* Notification System
+* Address Management
+* Payment Webhooks
 
-The developed APIs provide a strong foundation for integration with frontend web applications, mobile applications, or third-party services.
+---
+
+# Project Status
+
+Current Development Progress:
+
+Completed:
+
+* Authentication
+* Categories
+* Products
+* Uploads
+* Cart
+
+In Progress:
+
+* Remaining Core E-Commerce Modules
+
+Pending:
+
+* User Profile
+* User Address
+* Wishlist
+* Orders
+* Payments
+* Dashboard

@@ -1,5 +1,5 @@
 import argon2 from "argon2";
-import { IUser } from "../user/user.interface";
+import { IUser, UserRole } from "../user/user.interface";
 import { User } from "../user/user.model";
 import authEmailServices from "../../services/email/modules/auth/auth-email.services";
 import { v4 as uuidv4 } from "uuid";
@@ -240,6 +240,12 @@ class AuthService {
     }
 
     console.log("STEP 3: Password verified");
+
+    console.log("ROLE CHECK :", user.role);
+
+    if (user.role !== UserRole.CUSTOMER) {
+      throw new Error("Invalid credentials");
+    }
 
     // generate access token
     const accessToken = generateAccessToken({

@@ -2,7 +2,7 @@ import { Router } from "express";
 import validateRequest from "../../../middleware/schemal.validator";
 import { loginValidationSchema } from "./auth.schema";
 import authController from "./auth.controller";
-import authMiddleware from "../../../middleware/auth.middleware";
+import { authMiddleware } from "../../../middleware/auth.middleware";
 
 const authRouter = Router();
 // LOGIN_________________________________________________________
@@ -56,8 +56,4 @@ export default authRouter;
  *         description: Logout successful
  */
 
-authRouter.post(
-  "/logout",
-  authMiddleware,
-  authController.logoutUser,
-);
+authRouter.post("/logout", authMiddleware.auth, authController.logoutUser);

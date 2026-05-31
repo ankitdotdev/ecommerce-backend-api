@@ -24,7 +24,7 @@ import {
   verifyOtpValidationSchema,
   verifyResetOtpValidationSchema,
 } from "./auth.schema";
-import authMiddleware from "../../middleware/auth.middleware";
+import { authMiddleware } from "../../middleware/auth.middleware";
 
 const authRouter = Router();
 
@@ -320,7 +320,7 @@ authRouter.post(
 authRouter.put(
   "/change-password",
 
-  authMiddleware,
+  authMiddleware.auth,
 
   validateRequest(changePasswordValidationSchema),
 
@@ -361,7 +361,7 @@ export default authRouter;
 authRouter.post(
   "/logout",
 
-  authMiddleware,
+  authMiddleware.auth,
 
   authController.logoutUser,
 );

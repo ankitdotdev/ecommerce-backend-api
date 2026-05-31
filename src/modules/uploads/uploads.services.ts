@@ -1,5 +1,3 @@
-import { Express } from "express";
-
 import { BadRequestError } from "../../utils/errors/AppError";
 import {
   deleteFromCloudinary,

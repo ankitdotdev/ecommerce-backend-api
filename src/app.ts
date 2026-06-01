@@ -22,6 +22,7 @@ import productRouter from "./modules/products/products.route";
 import uploadRouter from "./modules/uploads/uploads.routes";
 import cartRouter from "./modules/cart/cart.routes";
 import addressRouter from "./modules/address/address.routes";
+import orderRouter from "./modules/orders/orders.routes";
 
 const app: Application = express();
 
@@ -60,6 +61,7 @@ app.use(`${config.apiPrefix}/admin`, adminRouter);
 app.use(`${config.apiPrefix}/addresses`, addressRouter);
 app.use(`${config.apiPrefix}/cart`, cartRouter);
 app.use(`${config.apiPrefix}/products`, productRouter);
+app.use(`${config.apiPrefix}/orders`, orderRouter);
 app.use(`${config.apiPrefix}/upload`, uploadRouter);
 
 // not found handler

@@ -82,6 +82,24 @@ class UserController {
       }
     },
   );
+
+  // DELETE_ME ____________________________________
+
+  deleteMe = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await userServices.deleteMe(req.user?.userId as string);
+
+        res.status(200).json({
+          success: true,
+          message: "Account deleted successfully",
+          data: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 }
 
 export default new UserController();

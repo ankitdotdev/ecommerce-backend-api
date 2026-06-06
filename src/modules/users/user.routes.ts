@@ -138,4 +138,24 @@ userRouter.patch(
  */
 userRouter.delete("/me/avatar", userController.deleteAvatar);
 
+
+// DELETE_ME ____________________________________
+/**
+ * @swagger
+ * /api/v1/users/me:
+ *   delete:
+ *     summary: Delete my account
+ *     description: Soft delete the authenticated user's account.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Account deleted successfully
+ *       404:
+ *         description: User not found
+ */
+userRouter.delete("/me", userController.deleteMe);
+
 export default userRouter;

@@ -4,6 +4,7 @@ import {
   deleteFromCloudinary,
   uploadToCloudinary,
 } from "../../utils/upload/cloudinary";
+import { Order } from "../orders/orders.model";
 
 class UserServices {
   // GET_ME ____________________________________
@@ -142,7 +143,7 @@ class UserServices {
     }
 
     if (!user.avatar) {
-      throw new BadRequestError("No avatar found");
+      throw new BadRequestError("No profile picture found");
     }
 
     const avatarUrl = user.avatar;
@@ -159,6 +160,63 @@ class UserServices {
 
     return {
       avatar: null,
+    };
+  }
+
+  // DELETE_ME ____________________________________
+  //
+  // Edge Cases Covered:
+  // - User does not exist
+  // - User already deleted
+  // - User has active orders
+  // - Avatar cleanup failure
+
+  async deleteMe(userId: string) {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+
+    if (user.isDeleted) {
+      throw new BadRequestError("Account has already been deleted");
+    }
+
+    const activeOrder = await Order.exists({
+      user: user._id,
+      orderStatus: {
+        $in: ["pending", "confirmed", "processing", "shipped"],
+      },
+    });
+
+    if (activeOrder) {
+      throw new BadRequestError(
+        "Cannot delete account while active orders exist",
+      );
+    }
+
+    // Soft delete user
+    user.isDeleted = true;
+    user.deletedAt = new Date();
+    user.status = "inactive";
+
+    // Invalidate active sessions
+    user.refreshToken = undefined;
+    user.refreshTokenExpiresAt = undefined;
+
+    await user.save();
+
+    if (user.avatar) {
+      try {
+        await deleteFromCloudinary(user.avatar);
+      } catch (error) {
+        console.error("AVATAR_DELETE_ERROR:", error);
+      }
+    }
+
+    return {
+      deleted: true,
+      deletedAt: user.deletedAt,
     };
   }
 }

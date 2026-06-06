@@ -12,6 +12,10 @@ export interface IUser {
 
   password: string;
 
+  dateOfBirth?: Date;
+  
+  gender?: "male" | "female" | "other";
+
   phone?: string;
 
   avatar?: string;

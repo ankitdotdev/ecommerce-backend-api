@@ -37,6 +37,15 @@ const userSchema = new Schema<IUser, UserModel>(
       type: String,
     },
 
+    dateOfBirth: {
+      type: Date,
+    },
+
+    gender: {
+      type: String,
+      enum: ["male", "female", "other"],
+    },
+
     avatar: {
       type: String,
     },

@@ -66,4 +66,10 @@ export const UserRole = {
   ADMIN: "admin",
   CUSTOMER: "customer",
 };
+
+export const UserStatus = {
+  BLOCKED: "blocked",
+  ACTIVE: "active",
+  INACTIVE: "inactive",
+};
 export interface UserModel extends Model<IUser> {}

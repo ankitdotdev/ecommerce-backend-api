@@ -24,6 +24,7 @@ import cartRouter from "./modules/cart/cart.routes";
 import addressRouter from "./modules/address/address.routes";
 import orderRouter from "./modules/orders/orders.routes";
 import paymentRouter from "./modules/payments/payments.routes";
+import userRouter from "./modules/users/user.routes";
 
 const app: Application = express();
 
@@ -58,6 +59,7 @@ app.get("/", (req, res) => {
 
 // auth routes
 app.use(`${config.apiPrefix}/auth`, authRouter);
+app.use(`${config.apiPrefix}/users`, userRouter);
 app.use(`${config.apiPrefix}/admin`, adminRouter);
 app.use(`${config.apiPrefix}/addresses`, addressRouter);
 app.use(`${config.apiPrefix}/cart`, cartRouter);

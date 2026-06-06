@@ -32,4 +32,9 @@ export const config = {
   cloudinaryApiKey: envConfig.CLOUDINARY_API_KEY,
 
   cloudinaryApiSecret: envConfig.CLOUDINARY_API_SECRET,
+
+  // RAZORPAY CONFIG
+
+  RAZORPAY_KEY_ID: envConfig.CLOUDINARY_API_SECRET,
+  RAZORPAY_KEY_SECRET: envConfig.CLOUDINARY_API_SECRET,
 };

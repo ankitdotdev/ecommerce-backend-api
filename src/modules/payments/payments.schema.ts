@@ -37,3 +37,27 @@ export const getPaymentValidationSchema = z.object({
     paymentId: z.string().trim().min(1, "Payment ID is required"),
   }),
 });
+
+
+// RECORD_PAYMENT_FAILURE ____________________________________
+
+export const recordPaymentFailureValidationSchema = z.object({
+  body: z.object({
+    orderId: z.string().trim().min(1, "Order ID is required"),
+
+    razorpayOrderId: z
+      .string()
+      .trim()
+      .min(1, "Razorpay Order ID is required"),
+
+    errorCode: z.string().trim().optional(),
+
+    errorDescription: z.string().trim().optional(),
+
+    errorSource: z.string().trim().optional(),
+
+    errorStep: z.string().trim().optional(),
+
+    errorReason: z.string().trim().optional(),
+  }),
+});

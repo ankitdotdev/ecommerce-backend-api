@@ -66,6 +66,27 @@ class PaymentController {
       }
     },
   );
+
+  // RECORD_PAYMENT_FAILURE ____________________________________
+
+  recordPaymentFailure = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await paymentsServices.recordPaymentFailure(
+          req.user?.userId! as string,
+          req.body,
+        );
+
+        res.status(201).json({
+          success: true,
+          message: "Failed payment recorded successfully",
+          data: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 }
 
 export default new PaymentController();

@@ -17,6 +17,7 @@ import { authMiddleware } from "../../middleware/auth.middleware";
 import {
   getPaymentValidationSchema,
   initiatePaymentValidationSchema,
+  recordPaymentFailureValidationSchema,
   verifyPaymentValidationSchema,
 } from "./payments.schema";
 import paymentsController from "./payments.controller";
@@ -25,9 +26,6 @@ const paymentRouter = Router();
 
 paymentRouter.use(authMiddleware.auth);
 paymentRouter.use(authMiddleware.customer);
-
-
-
 
 /**
  * @swagger
@@ -59,12 +57,6 @@ paymentRouter.get(
   validateRequest(getPaymentValidationSchema),
   paymentsController.getPayment,
 );
-
-
-
-
-
-
 
 /**
  * @swagger
@@ -144,6 +136,50 @@ paymentRouter.post(
   paymentsController.verifyPayment,
 );
 
-
+/**
+ * @swagger
+ * /api/v1/payments/failure:
+ *   post:
+ *     summary: Record failed payment
+ *     description: Records a failed payment attempt and updates payment status with failure details.
+ *     tags:
+ *       - Payments
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - orderId
+ *               - razorpayOrderId
+ *             properties:
+ *               orderId:
+ *                 type: string
+ *               razorpayOrderId:
+ *                 type: string
+ *               errorCode:
+ *                 type: string
+ *               errorDescription:
+ *                 type: string
+ *               errorSource:
+ *                 type: string
+ *               errorStep:
+ *                 type: string
+ *               errorReason:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Failed payment recorded successfully
+ *       404:
+ *         description: Order not found
+ */
+paymentRouter.post(
+  "/failure",
+  validateRequest(recordPaymentFailureValidationSchema),
+  paymentsController.recordPaymentFailure,
+);
 
 export default paymentRouter;

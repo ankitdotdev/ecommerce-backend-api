@@ -136,6 +136,86 @@ class PaymentServices {
 
     return payment;
   }
+
+  // RECORD_PAYMENT_FAILURE ____________________________________
+  //
+  // Edge Cases Covered:
+  // - Order does not exist
+  // - Order does not belong to user
+  // - Order already paid
+  // - Order is cancelled
+  // - Duplicate failed payment record
+
+  async recordPaymentFailure(
+    userId: string,
+    payload: {
+      orderId: string;
+      razorpayOrderId: string;
+      errorCode?: string;
+      errorDescription?: string;
+      errorSource?: string;
+      errorStep?: string;
+      errorReason?: string;
+    },
+  ) {
+    const order = await Order.findById(payload.orderId);
+
+    if (!order) {
+      throw new NotFoundError("Order not found");
+    }
+
+    if (order.user.toString() !== userId) {
+      throw new NotFoundError("Order not found");
+    }
+
+    if (order.orderStatus === "cancelled") {
+      throw new BadRequestError(
+        "Cannot record payment failure for a cancelled order",
+      );
+    }
+
+    if (order.paymentStatus === "paid") {
+      throw new BadRequestError(
+        "Cannot record payment failure for a paid order",
+      );
+    }
+
+    const existingPayment = await Payment.findOne({
+      razorpayOrderId: payload.razorpayOrderId,
+      status: PaymentStatus.FAILED,
+    });
+
+    if (existingPayment) {
+      throw new BadRequestError("Failed payment has already been recorded");
+    }
+
+    const payment = await Payment.create({
+      order: order._id,
+      user: order.user,
+      amount: order.totalAmount,
+      provider: PaymentProvider.RAZORPAY,
+      status: PaymentStatus.FAILED,
+      razorpayOrderId: payload.razorpayOrderId,
+    });
+
+    // Allow customer to retry payment on the same order
+    order.paymentStatus = "failed";
+
+    // Reset order back to pending unless already delivered
+    if (order.orderStatus !== "delivered") {
+      order.orderStatus = "pending";
+    }
+
+    await order.save();
+
+    return {
+      paymentId: payment._id,
+      orderId: order._id,
+      paymentStatus: order.paymentStatus,
+      orderStatus: order.orderStatus,
+      retryAllowed: true,
+    };
+  }
 }
 
 export default new PaymentServices();

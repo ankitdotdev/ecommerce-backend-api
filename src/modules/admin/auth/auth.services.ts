@@ -1,5 +1,6 @@
+import { UnauthorizedError } from "../../../utils/errors/AppError";
 import { generateAccessToken, generateRefreshToken } from "../../../utils/jwt";
-import { UserRole } from "../../users/user.interface";
+import { UserRole, UserStatus } from "../../users/user.interface";
 import { User } from "../../users/user.model";
 import argon2 from "argon2";
 
@@ -21,6 +22,11 @@ class AuthService {
 
     if (!user.isEmailVerified) {
       throw new Error("Email not verified");
+    }
+
+    // This is for future case if there are more than one admin
+    if (user.status === UserStatus.BLOCKED) {
+      throw new UnauthorizedError("Your account has been blocked.");
     }
 
     const isPasswordMatched = await argon2.verify(

@@ -76,9 +76,6 @@ reviewSchema.index(
   },
 );
 
-const Review = model<IReview>(
-  "Review",
-  reviewSchema,
-);
+const Review = model<IReview>("Review", reviewSchema);
 
 export default Review;

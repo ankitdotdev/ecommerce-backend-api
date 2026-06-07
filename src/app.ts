@@ -26,6 +26,7 @@ import orderRouter from "./modules/orders/orders.routes";
 import paymentRouter from "./modules/payments/payments.routes";
 import userRouter from "./modules/users/user.routes";
 import wishlistRouter from "./modules/wishlist/wishlist.routes";
+import reviewRouter from "./modules/reviews/reviews.router";
 
 const app: Application = express();
 
@@ -64,6 +65,7 @@ app.use(`${config.apiPrefix}/users`, userRouter);
 app.use(`${config.apiPrefix}/admin`, adminRouter);
 app.use(`${config.apiPrefix}/addresses`, addressRouter);
 app.use(`${config.apiPrefix}/wishlist`, wishlistRouter);
+app.use(`${config.apiPrefix}/reviews`, reviewRouter);
 app.use(`${config.apiPrefix}/cart`, cartRouter);
 app.use(`${config.apiPrefix}/products`, productRouter);
 app.use(`${config.apiPrefix}/orders`, orderRouter);

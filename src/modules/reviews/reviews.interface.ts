@@ -11,6 +11,14 @@ export interface IReview extends Document {
 
   comment: string;
 
+  isDeleted: boolean;
+
+  deletedAt?: Date;
+
+  deletedBy?: Types.ObjectId;
+
+  deletedReason?: string;
+
   createdAt?: Date;
 
   updatedAt?: Date;

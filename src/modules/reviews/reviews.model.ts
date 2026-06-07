@@ -1,4 +1,5 @@
 import { Schema, model } from "mongoose";
+
 import { IReview } from "./reviews.interface";
 
 const reviewSchema = new Schema<IReview>(
@@ -36,6 +37,28 @@ const reviewSchema = new Schema<IReview>(
       trim: true,
       maxlength: 1000,
     },
+
+    // Soft Delete
+    isDeleted: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+
+    deletedAt: {
+      type: Date,
+    },
+
+    deletedBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    deletedReason: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+    },
   },
   {
     timestamps: true,
@@ -53,6 +76,9 @@ reviewSchema.index(
   },
 );
 
-const Review = model<IReview>("Review", reviewSchema);
+const Review = model<IReview>(
+  "Review",
+  reviewSchema,
+);
 
 export default Review;

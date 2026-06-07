@@ -1,18 +1,12 @@
+import mongoose, { Types } from "mongoose";
 import { BadRequestError, NotFoundError } from "../../../utils/errors/AppError";
 import { Order } from "../../orders/orders.model";
-
 
 class OrderAdminServices {
   // GET_ALL_ORDERS ________________________________________________________________
 
   async getAllOrders(query: any) {
-    const {
-      page = 1,
-      limit = 10,
-      search,
-      orderStatus,
-      paymentStatus,
-    } = query;
+    const { page = 1, limit = 10, search, orderStatus, paymentStatus } = query;
 
     const filter: Record<string, any> = {};
 
@@ -72,7 +66,14 @@ class OrderAdminServices {
 
   async updateOrderStatus(
     orderId: string,
-    orderStatus: string,
+    adminId: string,
+    orderStatus:
+      | "confirmed"
+      | "processing"
+      | "shipped"
+      | "delivered"
+      | "cancelled",
+    note?: string,
   ) {
     const order = await Order.findById(orderId);
 
@@ -82,47 +83,90 @@ class OrderAdminServices {
 
     // Prevent updates after cancellation
     if (order.orderStatus === "cancelled") {
-      throw new BadRequestError(
-        "Cancelled orders cannot be updated",
-      );
+      throw new BadRequestError("Cancelled orders cannot be updated");
     }
 
     // Prevent updates after delivery
     if (order.orderStatus === "delivered") {
-      throw new BadRequestError(
-        "Delivered orders cannot be updated",
-      );
+      throw new BadRequestError("Delivered orders cannot be updated");
     }
 
     const validTransitions: Record<string, string[]> = {
       pending: ["confirmed", "cancelled"],
 
-      confirmed: [
-        "processing",
-        "cancelled",
-      ],
+      confirmed: ["processing", "cancelled"],
 
       processing: ["shipped"],
 
       shipped: ["delivered"],
     };
 
-    const allowedStatuses =
-      validTransitions[order.orderStatus] || [];
+    const allowedStatuses = validTransitions[order.orderStatus] || [];
 
-    if (
-      !allowedStatuses.includes(orderStatus)
-    ) {
+    if (!allowedStatuses.includes(orderStatus)) {
       throw new BadRequestError(
         `Cannot change order status from ${order.orderStatus} to ${orderStatus}`,
       );
     }
 
+    const previousStatus = order.orderStatus;
+
     order.orderStatus = orderStatus as any;
+
+    // STATUS_HISTORY ________________________________________________
+
+    order.statusHistory = order.statusHistory || [];
+
+    order.statusHistory.push({
+      status: orderStatus,
+
+      note,
+
+      updatedBy: new mongoose.Types.ObjectId(adminId),
+
+      updatedAt: new Date(),
+    });
 
     await order.save();
 
-    return order;
+    switch (orderStatus) {
+      case "confirmed":
+        // ORDER_CONFIRMED_EMAIL ________________________________________________
+
+        break;
+
+      case "processing":
+        // ORDER_PROCESSING_EMAIL ________________________________________________
+
+        break;
+
+      case "shipped":
+        // ORDER_SHIPPED_EMAIL ________________________________________________
+
+        break;
+
+      case "delivered":
+        // ORDER_DELIVERED_EMAIL ________________________________________________
+
+        break;
+
+      case "cancelled":
+        // ORDER_CANCELLED_EMAIL ________________________________________________
+
+        break;
+    }
+
+    return {
+      order,
+
+      previousStatus,
+
+      currentStatus: orderStatus,
+
+      note,
+
+      updatedBy: adminId,
+    };
   }
 }
 

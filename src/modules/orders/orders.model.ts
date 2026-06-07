@@ -161,21 +161,45 @@ const orderSchema = new Schema<IOrder>(
 
     paymentStatus: {
       type: String,
-      enum: [
-        "pending",
-        "paid",
-        "failed",
-        "refunded",
-      ],
+      enum: ["pending", "paid", "failed", "refunded"],
       default: "pending",
     },
+
+    // STATUS HISTORY ________________________________________________
+    statusHistory: [
+      {
+        status: {
+          type: String,
+
+          enum: [
+            "pending",
+            "confirmed",
+            "processing",
+            "shipped",
+            "delivered",
+            "cancelled",
+          ],
+        },
+
+        note: String,
+
+        updatedBy: {
+          type: Schema.Types.ObjectId,
+
+          ref: "User",
+        },
+
+        updatedAt: {
+          type: Date,
+
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
   },
 );
 
-export const Order = model<IOrder>(
-  "Order",
-  orderSchema,
-);
+export const Order = model<IOrder>("Order", orderSchema);

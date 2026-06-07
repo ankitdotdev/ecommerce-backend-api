@@ -92,7 +92,7 @@ class AuthService {
     // send verification email
     await authEmailServices.sendVerificationOtp(user.email, otp);
 
-    console.log("STEP 13: Verification email sent and Welcome email");
+    console.log("STEP 13: Verification email sent and W elcome email");
 
     return user;
   }

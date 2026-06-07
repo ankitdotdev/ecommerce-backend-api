@@ -165,63 +165,107 @@ The API follows a strict **3-layer architecture** to enforce separation of conce
 ---
 
 ## Project Structure
-
-```
+```text
 src/
+│
+├── config/
+│   ├── env.config.ts
+│   ├── swagger.config.ts
+│   └── index.ts
+│
+├── database/
+│   └── mongoose.ts
+│
+├── middleware/
+│   ├── auth.middleware.ts
+│   ├── schema.validator.ts
+│   └── ...
+│
 ├── modules/
+│
 │   ├── auth/
 │   │   ├── auth.controller.ts
 │   │   ├── auth.service.ts
 │   │   ├── auth.routes.ts
-│   │   └── auth.validator.ts
+│   │   ├── auth.schema.ts
+│   │   ├── auth.interface.ts
+│   │   └── auth.model.ts
+│   │
 │   ├── users/
-│   ├── addresses/
+│   ├── address/
 │   ├── products/
 │   ├── wishlist/
 │   ├── cart/
 │   ├── orders/
 │   ├── payments/
 │   ├── reviews/
-│   ├── uploads/
+│   └── uploads/
+│
+│
 │   └── admin/
+│       ├── auth/
 │       ├── users/
 │       ├── products/
 │       ├── orders/
 │       └── reviews/
 │
-├── middleware/
-│   ├── authenticate.ts        # JWT verification
-│   ├── authorize.ts           # RBAC enforcement
-│   ├── validate.ts            # Zod request validation
-│   ├── upload.ts              # Multer + Cloudinary pipeline
-│   └── errorHandler.ts        # Global error normalization
-│
 ├── services/
-│   ├── email.service.ts       # Resend integration
-│   ├── cloudinary.service.ts  # Media upload/delete
-│   ├── token.service.ts       # JWT sign/verify/rotate
-│   └── invoice.service.ts     # PDF generation + upload
+│   └── email/
+│       ├── email.service.ts
+│       ├── email.interface.ts
+│       ├── resend.config.ts
+│       │
+│       └── modules/
+│           ├── auth/
+│           │   ├── auth-email.service.ts
+│           │   └── auth-email.template.ts
+│           │
+│           ├── orders/
+│           │   ├── order-email.service.ts
+│           │   └── order-email.template.ts
+│           │
+│           └── payments/
+│               ├── payment-email.service.ts
+│               └── payment-email.template.ts
 │
-├── config/
-│   ├── db.ts                  # Mongoose connection
-│   ├── env.ts                 # Zod-validated env schema
-│   └── swagger.ts             # OpenAPI spec config
+├── types/
+│   └── express/
+│       └── index.d.ts
 │
 ├── utils/
-│   ├── ApiError.ts            # Typed error class
-│   ├── ApiResponse.ts         # Standardized response wrapper
-│   └── asyncHandler.ts        # Express async error wrapper
+│   ├── errors/
+│   │   ├── ApiError.ts
+│   │   ├── BadRequestError.ts
+│   │   ├── NotFoundError.ts
+│   │   └── ...
+│   │
+│   ├── pdf/
+│   │   └── invoice-generator.ts
+│   │
+│   ├── string/
+│   │   └── slugify.ts
+│   │
+│   └── upload/
+│       ├── cloudinary.ts
+│       └── upload.utils.ts
 │
-├── constants/
-│   ├── roles.ts
-│   ├── orderStatus.ts
-│   └── paymentStatus.ts
-│
-├── routes/
-│   └── index.ts               # Root router aggregation
-│
-└── app.ts                     # Express app bootstrap
+├── app.ts
+└── server.ts
 ```
+
+### Architecture Highlights
+
+* Modular feature-based architecture
+* Separation of Controllers, Services, Schemas, Models, and Routes
+* Dedicated Admin Module isolated from customer-facing APIs
+* Centralized Email Service with module-specific email templates
+* Cloudinary-based media management
+* Razorpay payment integration
+* PDF invoice generation utilities
+* Zod-based request validation
+* JWT authentication and role-based authorization
+* Type-safe TypeScript implementation
+* Scalable folder structure suitable for large applications
 
 ---
 

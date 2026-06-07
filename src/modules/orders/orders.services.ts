@@ -181,7 +181,25 @@ class OrderServices {
     order.orderStatus = "cancelled";
 
     await order.save();
+    // ORDER_CANCELLED_EMAIL ________________________________________________
 
+    try {
+      const user = await User.findById(userId);
+
+      if (user) {
+        await orderEmailService.sendOrderCancelledEmail({
+          email: user.email,
+
+          customerName: user.name,
+
+          orderNumber: order.orderNumber,
+
+          note: "Order cancelled by customer",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to send order cancelled email", error);
+    }
     return order;
   }
 

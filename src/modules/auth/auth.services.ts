@@ -82,10 +82,17 @@ class AuthService {
 
     console.log("STEP 12: User created");
 
+    // send welcome email
+    await authEmailServices.sendWelcomeEmail(
+      user.email,
+      user.name,
+      config.companyName,
+    );
+
     // send verification email
     await authEmailServices.sendVerificationOtp(user.email, otp);
 
-    console.log("STEP 13: Verification email sent");
+    console.log("STEP 13: Verification email sent and Welcome email");
 
     return user;
   }

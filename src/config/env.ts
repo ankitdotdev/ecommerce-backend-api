@@ -26,10 +26,12 @@ const envSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
 
-
   // RAZORPAY CONFIG
   RAZORPAY_KEY_ID: z.string(),
   RAZORPAY_KEY_SECRET: z.string(),
+
+  // COMPANY NAME
+  COMPANY_NAME: z.string(),
 });
 
 export const envConfig = envSchema.parse(process.env);

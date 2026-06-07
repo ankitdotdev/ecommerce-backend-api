@@ -37,4 +37,7 @@ export const config = {
 
   RAZORPAY_KEY_ID: envConfig.CLOUDINARY_API_SECRET,
   RAZORPAY_KEY_SECRET: envConfig.CLOUDINARY_API_SECRET,
+
+  //Company Name
+  companyName: envConfig.COMPANY_NAME,
 };

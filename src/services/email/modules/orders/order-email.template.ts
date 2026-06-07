@@ -1,4 +1,3 @@
-
 // ORDER RECEIVED EMAIL TEMPLATE FOR CUSTOMER
 
 export const orderReceivedTemplate = ({
@@ -69,7 +68,6 @@ export const orderReceivedTemplate = ({
   `;
 };
 
-
 // ORDER RECEIVED EMAIL TEMPLATE FOR ADMIN
 export const orderReceivedAdminTemplate = ({
   customerName,
@@ -121,3 +119,79 @@ export const orderReceivedAdminTemplate = ({
     </div>
   `;
 };
+
+// ORDER_STATUS_UPDATE ________________________________________________
+
+export const orderStatusUpdateTemplate = ({
+  companyName,
+  customerName,
+  orderNumber,
+  status,
+  message,
+  note,
+}: {
+  companyName: string;
+  customerName: string;
+  orderNumber: string;
+  status: string;
+  message: string;
+  note?: string;
+}) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto;">
+
+      <h2>${message}</h2>
+
+      <p>Hi ${customerName},</p>
+
+      <p>
+        Your order status has been updated.
+      </p>
+
+      <div
+        style="
+          background:#f5f5f5;
+          padding:16px;
+          border-radius:8px;
+          margin:20px 0;
+        "
+      >
+        <p>
+          <strong>Order Number:</strong>
+          ${orderNumber}
+        </p>
+
+        <p>
+          <strong>Status:</strong>
+          ${status.toUpperCase()}
+        </p>
+
+        ${
+          note
+            ? `
+        <p>
+          <strong>Note:</strong>
+          ${note}
+        </p>
+        `
+            : ""
+        }
+      </div>
+
+      <p>
+        Thank you for shopping with ${companyName}.
+      </p>
+
+      <br />
+
+      <p>
+        Regards,<br />
+        Team ${companyName}
+      </p>
+
+    </div>
+  `;
+};
+
+
+

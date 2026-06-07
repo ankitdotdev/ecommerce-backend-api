@@ -1,6 +1,8 @@
 import mongoose, { Types } from "mongoose";
 import { BadRequestError, NotFoundError } from "../../../utils/errors/AppError";
 import { Order } from "../../orders/orders.model";
+import orderEmailService from "../../../services/email/modules/orders/order-email.service";
+import { User } from "../../users/user.model";
 
 class OrderAdminServices {
   // GET_ALL_ORDERS ________________________________________________________________
@@ -62,6 +64,7 @@ class OrderAdminServices {
     return order;
   }
 
+  // UPDATE_ORDER_STATUS ________________________________________________________________
   // UPDATE_ORDER_STATUS ________________________________________________________________
 
   async updateOrderStatus(
@@ -129,31 +132,92 @@ class OrderAdminServices {
 
     await order.save();
 
-    switch (orderStatus) {
-      case "confirmed":
-        // ORDER_CONFIRMED_EMAIL ________________________________________________
+    // CUSTOMER ________________________________________________
 
-        break;
+    const user = await User.findById(order.user);
 
-      case "processing":
-        // ORDER_PROCESSING_EMAIL ________________________________________________
+    if (user) {
+      switch (orderStatus) {
+        case "confirmed":
+          // ORDER_CONFIRMED_EMAIL ________________________________________________
 
-        break;
+          try {
+            await orderEmailService.sendOrderConfirmedEmail({
+              email: user.email,
+              customerName: user.name,
+              orderNumber: order.orderNumber,
+              note,
+            });
+          } catch (error) {
+            console.error("Failed to send order confirmed email", error);
+          }
 
-      case "shipped":
-        // ORDER_SHIPPED_EMAIL ________________________________________________
+          break;
 
-        break;
+        case "processing":
+          // ORDER_PROCESSING_EMAIL ________________________________________________
 
-      case "delivered":
-        // ORDER_DELIVERED_EMAIL ________________________________________________
+          try {
+            await orderEmailService.sendOrderProcessingEmail({
+              email: user.email,
+              customerName: user.name,
+              orderNumber: order.orderNumber,
+              note,
+            });
+          } catch (error) {
+            console.error("Failed to send order processing email", error);
+          }
 
-        break;
+          break;
 
-      case "cancelled":
-        // ORDER_CANCELLED_EMAIL ________________________________________________
+        case "shipped":
+          // ORDER_SHIPPED_EMAIL ________________________________________________
 
-        break;
+          try {
+            await orderEmailService.sendOrderShippedEmail({
+              email: user.email,
+              customerName: user.name,
+              orderNumber: order.orderNumber,
+              note,
+            });
+          } catch (error) {
+            console.error("Failed to send order shipped email", error);
+          }
+
+          break;
+
+        case "delivered":
+          // ORDER_DELIVERED_EMAIL ________________________________________________
+
+          try {
+            await orderEmailService.sendOrderDeliveredEmail({
+              email: user.email,
+              customerName: user.name,
+              orderNumber: order.orderNumber,
+              note,
+            });
+          } catch (error) {
+            console.error("Failed to send order delivered email", error);
+          }
+
+          break;
+
+        case "cancelled":
+          // ORDER_CANCELLED_EMAIL ________________________________________________
+
+          try {
+            await orderEmailService.sendOrderCancelledEmail({
+              email: user.email,
+              customerName: user.name,
+              orderNumber: order.orderNumber,
+              note,
+            });
+          } catch (error) {
+            console.error("Failed to send order cancelled email", error);
+          }
+
+          break;
+      }
     }
 
     return {

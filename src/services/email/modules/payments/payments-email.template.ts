@@ -1,3 +1,6 @@
+
+// PAYMENT SUCCESS ________________________________________________ (To Customer)
+
 export const paymentSuccessUserTemplate = ({
   companyName,
   customerName,
@@ -71,6 +74,7 @@ export const paymentSuccessUserTemplate = ({
   `;
 };
 
+// PAYMENT SUCCESS ________________________________________________ (To Admin)
 
 export const paymentSuccessAdminTemplate = ({
   customerName,
@@ -115,6 +119,80 @@ export const paymentSuccessAdminTemplate = ({
       <p>
         <strong>Status:</strong>
         Paid / Confirmed
+      </p>
+
+    </div>
+  `;
+};
+
+
+
+
+// PAYMENT FAILURE ________________________________________________
+
+export const paymentFailureUserTemplate = ({
+  companyName,
+  customerName,
+  orderNumber,
+  amount,
+}: {
+  companyName: string;
+  customerName: string;
+  orderNumber: string;
+  amount: number;
+}) => {
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 650px; margin: auto;">
+
+      <h2>❌ Payment Failed</h2>
+
+      <p>Hi ${customerName},</p>
+
+      <p>
+        Unfortunately, we were unable to process your payment for the order below.
+      </p>
+
+      <div
+        style="
+          background:#f5f5f5;
+          padding:16px;
+          border-radius:8px;
+          margin:20px 0;
+        "
+      >
+        <p>
+          <strong>Order Number:</strong>
+          ${orderNumber}
+        </p>
+
+        <p>
+          <strong>Amount:</strong>
+          ₹${amount}
+        </p>
+
+        <p>
+          <strong>Payment Status:</strong>
+          Failed
+        </p>
+      </div>
+
+      <p>
+        No amount has been charged from your account.
+      </p>
+
+      <p>
+        Please try again using the same order or choose a different payment method.
+      </p>
+
+      <p>
+        If you continue experiencing issues, please contact our support team.
+      </p>
+
+      <br />
+
+      <p>
+        Regards,<br />
+        Team ${companyName}
       </p>
 
     </div>

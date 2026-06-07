@@ -1,8 +1,10 @@
 import { config } from "../../../../config";
 import emailService from "../../email.service";
-import { paymentSuccessAdminTemplate, paymentSuccessUserTemplate } from "./payments-email.template";
-
-
+import {
+    paymentFailureUserTemplate,
+  paymentSuccessAdminTemplate,
+  paymentSuccessUserTemplate,
+} from "./payments-email.template";
 
 class PaymentEmailService {
   // USER EMAIL _______________________________________
@@ -53,6 +55,33 @@ class PaymentEmailService {
       html: paymentSuccessAdminTemplate({
         customerName,
         customerEmail,
+        orderNumber,
+        amount,
+      }),
+    });
+  }
+
+  // PAYMENT FAILURE ________________________________________________
+
+  async sendPaymentFailureToUser({
+    email,
+    customerName,
+    orderNumber,
+    amount,
+  }: {
+    email: string;
+    customerName: string;
+    orderNumber: string;
+    amount: number;
+  }) {
+    await emailService.sendEmail({
+      to: email,
+
+      subject: `Payment Failed - ${orderNumber}`,
+
+      html: paymentFailureUserTemplate({
+        companyName: config.companyName,
+        customerName,
         orderNumber,
         amount,
       }),

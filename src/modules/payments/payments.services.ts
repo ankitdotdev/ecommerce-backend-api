@@ -233,7 +233,21 @@ class PaymentServices {
     }
 
     await order.save();
+    // PAYMENT FAILURE EMAIL ________________________________________________
+    try {
+      const user = await User.findById(userId);
 
+      if (user) {
+        await paymentsEmailService.sendPaymentFailureToUser({
+          email: user.email,
+          customerName: user.name,
+          orderNumber: order.orderNumber,
+          amount: order.totalAmount,
+        });
+      }
+    } catch (error) {
+      console.error("Failed to send payment failure email", error);
+    }
     return {
       paymentId: payment._id,
       orderId: order._id,

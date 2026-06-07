@@ -32,6 +32,9 @@ const envSchema = z.object({
 
   // COMPANY NAME
   COMPANY_NAME: z.string(),
+
+  // COMPANY ADMIL EMAIL
+  ADMIN_EMAIL: z.string(),
 });
 
 export const envConfig = envSchema.parse(process.env);

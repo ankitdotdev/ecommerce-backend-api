@@ -40,4 +40,5 @@ export const config = {
 
   //Company Name
   companyName: envConfig.COMPANY_NAME,
+  adminEmail: envConfig.ADMIN_EMAIL,
 };

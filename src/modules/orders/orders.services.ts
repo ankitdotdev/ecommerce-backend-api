@@ -7,6 +7,9 @@ import Payment from "../payments/payments.model";
 import { PaymentStatus } from "../payments/payments.interface";
 import { generateInvoicePdf } from "../../utils/pdf/generateInvoicePdf";
 import { uploadToCloudinary } from "../../utils/upload/cloudinary";
+import orderEmailService from "../../services/email/modules/orders/order-email.service";
+import { User } from "../users/user.model";
+import { config } from "../../config";
 
 class OrderServices {
   // CREATE_ORDER ________________________________________________________________
@@ -100,6 +103,30 @@ class OrderServices {
 
     await cart.save();
 
+    try {
+      const user = await User.findById(userId);
+
+      if (user) {
+        await Promise.all([
+          orderEmailService.sendOrderReceivedEmail({
+            email: user.email,
+            customerName: user.name,
+            companyName: config.companyName,
+            orderNumber: order.orderNumber,
+            totalAmount: order.totalAmount,
+          }),
+
+          orderEmailService.sendOrderReceivedAdminEmail({
+            customerName: user.name,
+            customerEmail: user.email,
+            orderNumber: order.orderNumber,
+            totalAmount: order.totalAmount,
+          }),
+        ]);
+      }
+    } catch (error) {
+      console.error("Order email failed", error);
+    }
     return order;
   }
 

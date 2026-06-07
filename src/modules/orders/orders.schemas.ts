@@ -19,3 +19,11 @@ export const orderParamsValidationSchema = z.object({
       .min(1, "Order ID is required"),
   }),
 });
+
+// GENERATE_INVOICE_PDF ____________________________________________
+
+export const generateInvoiceValidationSchema = z.object({
+  params: z.object({
+    orderId: z.string().trim().min(1, "Order ID is required"),
+  }),
+});

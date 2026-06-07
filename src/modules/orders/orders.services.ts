@@ -3,6 +3,10 @@ import { Address } from "../address/address.model";
 import { BadRequestError, NotFoundError } from "../../utils/errors/AppError";
 import { Cart } from "../cart/cart.module";
 import { Order } from "./orders.model";
+import Payment from "../payments/payments.model";
+import { PaymentStatus } from "../payments/payments.interface";
+import { generateInvoicePdf } from "../../utils/pdf/generateInvoicePdf";
+import { uploadToCloudinary } from "../../utils/upload/cloudinary";
 
 class OrderServices {
   // CREATE_ORDER ________________________________________________________________
@@ -152,6 +156,53 @@ class OrderServices {
     await order.save();
 
     return order;
+  }
+
+  // GENERATE_INVOICE_PDF ____________________________________________
+  // Edge Cases Covered:
+  // - Order does not exist
+  // - Order does not belong to user
+  // - Order not paid
+  // - Payment record not found
+  // - Invoice generation failure
+  // - Cloudinary upload failure
+
+  async generateInvoice(userId: string, orderId: string) {
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      throw new NotFoundError("Order not found");
+    }
+
+    if (order.user.toString() !== userId) {
+      throw new NotFoundError("Order not found");
+    }
+
+    if (order.paymentStatus !== "paid") {
+      throw new BadRequestError("Invoice is available only for paid orders");
+    }
+
+    const payment = await Payment.findOne({
+      order: order._id,
+      status: PaymentStatus.PAID,
+    });
+
+    if (!payment) {
+      throw new NotFoundError("Payment details not found for this order");
+    }
+
+    const pdfBuffer = await generateInvoicePdf(order, payment);
+
+    const uploadedInvoice = await uploadToCloudinary(
+      pdfBuffer,
+      "watersports/invoices",
+    );
+
+    return {
+      orderId: order._id,
+      orderNumber: order.orderNumber,
+      invoiceUrl: uploadedInvoice.secure_url,
+    };
   }
 }
 

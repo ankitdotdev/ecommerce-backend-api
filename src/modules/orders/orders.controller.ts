@@ -83,6 +83,27 @@ class OrderController {
       }
     },
   );
+
+  // GENERATE_INVOICE_PDF ____________________________________________
+
+  generateInvoice = catchAsync(
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const result = await ordersServices.generateInvoice(
+          req.user?.userId as string,
+          req.params.orderId as string,
+        );
+
+        res.status(200).json({
+          success: true,
+          message: "Invoice generated successfully",
+          data: result,
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
 }
 
 export default new OrderController();

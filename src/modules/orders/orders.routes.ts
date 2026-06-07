@@ -2,12 +2,14 @@
 // GET    /api/v1/orders
 // GET    /api/v1/orders/:orderId
 // PATCH  /api/v1/orders/:orderId/cancel
+// GET /api/v1/orders/:orderId/invoice
 
 import { Router } from "express";
 import { authMiddleware } from "../../middleware/auth.middleware";
 import validateRequest from "../../middleware/schemal.validator";
 import {
   createOrderValidationSchema,
+  generateInvoiceValidationSchema,
   orderParamsValidationSchema,
 } from "./orders.schemas";
 import ordersController from "./orders.controller";
@@ -146,4 +148,61 @@ orderRouter.patch(
   ordersController.cancelOrder,
 );
 
+// GENERATE_INVOICE_PDF ____________________________________________
+
+/**
+ * @swagger
+ * /api/v1/orders/{orderId}/invoice:
+ *   get:
+ *     summary: Generate order invoice
+ *     description: Generate and retrieve a PDF invoice for a paid order belonging to the authenticated customer. The generated invoice is uploaded to Cloudinary and the invoice URL is returned.
+ *     tags:
+ *       - Orders
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: orderId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Order ID
+ *     responses:
+ *       200:
+ *         description: Invoice generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Invoice generated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     orderId:
+ *                       type: string
+ *                       example: 684f92c6b1d7e9c1d7f12345
+ *                     orderNumber:
+ *                       type: string
+ *                       example: ORD-20260608-001
+ *                     invoiceUrl:
+ *                       type: string
+ *                       example: https://res.cloudinary.com/demo/raw/upload/v1234567890/invoices/invoice.pdf
+ *       400:
+ *         description: Invoice is available only for paid orders
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Order or payment details not found
+ */
+orderRouter.get(
+  "/:orderId/invoice",
+  validateRequest(generateInvoiceValidationSchema),
+  ordersController.generateInvoice,
+);
 export default orderRouter;

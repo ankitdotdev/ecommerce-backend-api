@@ -26,6 +26,16 @@ export interface IOrderItem {
   subtotal: number;
 }
 
+export interface IOrderStatusHistory {
+  status: OrderStatus;
+
+  note?: string;
+  
+  updatedBy?: Types.ObjectId;
+
+  updatedAt: Date;
+}
+
 export interface IShippingAddress {
   addressLine1: string;
 
@@ -62,6 +72,10 @@ export interface IOrder {
   orderStatus: OrderStatus;
 
   paymentStatus: PaymentStatus;
+
+  // STATUS HISTORY ________________________________________________
+
+  statusHistory?: IOrderStatusHistory[];
 
   createdAt?: Date;
 

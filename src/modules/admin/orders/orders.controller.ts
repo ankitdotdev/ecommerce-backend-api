@@ -46,14 +46,24 @@ class OrderAdminController {
   updateOrderStatus = catchAsync(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
+        const { orderId } = req.params;
+
+        const { orderStatus, note } = req.body;
+
+        const adminId = req.user?.userId as string;
+
         const result = await ordersServices.updateOrderStatus(
-          req.params.orderId as string,
-          req.body.orderStatus,
+          orderId as string,
+          adminId,
+          orderStatus,
+          note,
         );
 
         res.status(200).json({
           success: true,
+
           message: "Order status updated successfully",
+
           data: result,
         });
       } catch (error) {

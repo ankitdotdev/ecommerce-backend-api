@@ -115,7 +115,7 @@ orderAdminRouter.get(
  * /api/v1/admin/orders/{orderId}/status:
  *   patch:
  *     summary: Update order status
- *     description: Update the status of an order.
+ *     description: Update the status of an order and optionally provide a note that will be visible in the order timeline and customer notifications.
  *     tags:
  *       - Admin Orders
  *     security:
@@ -126,6 +126,7 @@ orderAdminRouter.get(
  *         required: true
  *         schema:
  *           type: string
+ *         example: 6843f5d8a12c9f7e8b123456
  *     requestBody:
  *       required: true
  *       content:
@@ -138,16 +139,64 @@ orderAdminRouter.get(
  *               orderStatus:
  *                 type: string
  *                 enum:
- *                   - pending
  *                   - confirmed
  *                   - processing
  *                   - shipped
  *                   - delivered
  *                   - cancelled
- *                 example: processing
+ *               note:
+ *                 type: string
+ *                 description: Optional note related to the status update.
+ *           examples:
+ *             confirmed:
+ *               summary: Confirm Order
+ *               value:
+ *                 orderStatus: confirmed
+ *                 note: Payment verified successfully
+ *
+ *             processing:
+ *               summary: Start Processing
+ *               value:
+ *                 orderStatus: processing
+ *                 note: Order packed and assigned to warehouse team
+ *
+ *             shipped:
+ *               summary: Ship Order
+ *               value:
+ *                 orderStatus: shipped
+ *                 note: BlueDart Tracking Number BD123456
+ *
+ *             delivered:
+ *               summary: Mark Delivered
+ *               value:
+ *                 orderStatus: delivered
+ *                 note: Delivered to customer successfully
+ *
+ *             cancelled:
+ *               summary: Cancel Order
+ *               value:
+ *                 orderStatus: cancelled
+ *                 note: Product out of stock
+ *
  *     responses:
  *       200:
  *         description: Order status updated successfully
+ *         content:
+ *           application/json:
+ *             examples:
+ *               success:
+ *                 value:
+ *                   success: true
+ *                   statusCode: 200
+ *                   message: Order status updated successfully
+ *                   data:
+ *                     previousStatus: confirmed
+ *                     currentStatus: processing
+ *                     note: Order packed and assigned to warehouse team
+ *
+ *       400:
+ *         description: Invalid order status transition
+ *
  *       404:
  *         description: Order not found
  */

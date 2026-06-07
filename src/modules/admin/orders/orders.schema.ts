@@ -47,16 +47,21 @@ export const adminOrderParamsValidationSchema = z.object({
 });
 
 // UPDATE_ORDER_STATUS ________________________________________________________________
+export const updateOrderStatusValidationSchema =
+  z.object({
+    body: z.object({
+      orderStatus: z.enum([
+        "confirmed",
+        "processing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ]),
 
-export const updateOrderStatusValidationSchema = z.object({
-  body: z.object({
-    orderStatus: z.enum([
-      "pending",
-      "confirmed",
-      "processing",
-      "shipped",
-      "delivered",
-      "cancelled",
-    ]),
-  }),
-});
+      note: z
+        .string()
+        .trim()
+        .max(500)
+        .optional(),
+    }),
+  });

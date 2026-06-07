@@ -1,6 +1,8 @@
 import razorpay from "../../config/razorpay";
+import paymentsEmailService from "../../services/email/modules/payments/payments-email.service";
 import { BadRequestError, NotFoundError } from "../../utils/errors/AppError";
 import { Order } from "../orders/orders.model";
+import { User } from "../users/user.model";
 import { PaymentProvider, PaymentStatus } from "./payments.interface";
 import Payment from "./payments.model";
 
@@ -102,7 +104,31 @@ class PaymentServices {
     }
 
     await order.save();
+    try {
+      const user = await User.findById(userId);
 
+      if (user) {
+        await Promise.all([
+          paymentsEmailService.sendPaymentSuccessToUser({
+            email: user.email,
+            customerName: user.name,
+            orderNumber: order.orderNumber,
+            amount: order.totalAmount,
+          }),
+
+          paymentsEmailService.sendPaymentSuccessToAdmin({
+            customerName: user.name,
+            customerEmail: user.email,
+            orderNumber: order.orderNumber,
+            amount: order.totalAmount,
+          }),
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to send payment success emails", error);
+
+      // Silent failure
+    }
     return {
       verified: true,
       paymentId: payment._id,
